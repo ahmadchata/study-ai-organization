@@ -1,35 +1,6 @@
 .side-bar {
-  /* left: 50%;
-  transform: translateX(-50%); */
-  right: 20px;
-  /* transform: translateX(100%); */
-  top: 65px;
-}
-
-.com-side-bar {
-  background-color: #ab2c48;
-  /* left: 50%;
-  transform: translateX(-50%); */
-  left: 0;
-  /* transform: translateX(100%); */
-  top: 0;
-  min-width: 292px;
-  min-height: 100%;
-  z-index: 1;
-}
-
-.study-side-bar {
-  background-color: #fff;
-  left: 0;
-  border-right: 1.5px solid #eaeaea;
-  top: 0;
-  min-width: 292px;
-  min-height: 100%;
-  z-index: 1;
-}
-
-.com-side-holder {
-  border-top: 1px solid #eaeaea;
+  right: 0;
+  top: 80px;
 }
 
 @media screen and (max-width: 768px) {

@@ -5,92 +5,110 @@ import Sidebar from "../SideBar/Sidebar";
 import { CSSTransition } from "react-transition-group";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import GroupIcon from "@mui/icons-material/Group";
+import SpeakerGroupIcon from "@mui/icons-material/SpeakerGroup";
+import WorkspacesIcon from "@mui/icons-material/Workspaces";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+
 const Header = () => {
   const [sidebar, setSidebar] = useState(false);
   const sideBarRef = useRef(null);
   const location = useLocation();
 
+  const currentPage = {
+    "/dashboard": "Overview",
+    "/dashboard/students": "Students",
+    "/dashboard/subscriptions": "Subscriptions",
+  };
+
   const toggleSidebar = () => {
     setSidebar((prev) => !prev);
   };
 
-  <header
-    className="border-bottom bg-dark m-0 p-0 sticky-top d-flex align-items-end"
-    style={{ minHeight: "65px" }}
-  >
-    <div className="container position-relative">
-      <div className="d-flex">
-        <div className={`d-none d-lg-flex align-items-center`}>
-          <img
-            src="/assets/logo.svg"
-            width={186}
-            height={32}
-            alt="Study AI logo"
-            className="img-fluid"
-          />
-        </div>
-        <div className="d-flex justify-content-between w-100">
-          <div className="ms-0 ms-lg-5 header-tabs">
-            <Link
-              className={`text-decoration-none h-100 ${
-                location.pathname === "/dashboard"
-                  ? "header-active"
-                  : "grey-text"
-              }`}
-              to={"/dashboard"}
-              style={{
-                padding: "0.7rem 1rem",
-              }}
-            >
-              <span className="">Home</span>
-            </Link>
-            {location.pathname === "/dashboard/profile" ? (
+  return (
+    <header
+      className="header-bg m-0 p-0 d-flex align-items-center px-lg-5 px-2 py-4"
+      style={{ minHeight: "65px" }}
+    >
+      <div className="position-relative w-100">
+        <div className="d-flex justify-content-between align-items-center">
+          <div>
+            <img
+              src="/assets/logo.svg"
+              alt="Study AI logo"
+              className="img-fluid"
+            />
+            <div className="text-white mt-4">
+              <label className="header-label">Brazen Tutors</label>
+              <label className="ms-3 fw-regular">
+                {currentPage[location.pathname] ?? ""}
+              </label>
+            </div>
+          </div>
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="header-tabs">
               <Link
-                className={`text-decoration-none ${
-                  location.pathname === "/dashboard/profile"
+                className={`text-decoration-none text-white ${
+                  location.pathname === "/dashboard"
                     ? "header-active"
-                    : "grey-text"
+                    : "header"
                 }`}
-                to={"/dashboard/profile"}
-                style={{
-                  padding: "0.7rem 1rem",
-                }}
+                to={"/dashboard"}
               >
-                <span>Profile</span>
+                <WorkspacesIcon
+                  style={{ color: "#fff", marginRight: "10px" }}
+                />
+                Overview
               </Link>
-            ) : (
+
               <Link
-                className={`text-decoration-none ${
+                className={`text-decoration-none text-white mx-3 ${
+                  location.pathname === "/dashboard/students"
+                    ? "header-active"
+                    : "header"
+                }`}
+                to={"/dashboard/students"}
+              >
+                <GroupIcon style={{ color: "#fff", marginRight: "10px" }} />
+                Students
+              </Link>
+
+              <Link
+                className={`text-decoration-none text-white me-3 ${
                   location.pathname.includes("/dashboard/learning")
                     ? "header-active"
-                    : "grey-text"
+                    : "header"
                 }`}
                 to={"/dashboard/learning"}
-                style={{
-                  padding: "0.7rem 1rem",
-                }}
               >
-                <span>Learning</span>
+                <SpeakerGroupIcon
+                  style={{ color: "#fff", marginRight: "10px" }}
+                />
+                Subscriptions
               </Link>
-            )}
-          </div>
-          <div className="d-flex align-items-center mb-lg-0">
-            <button className="btn" onClick={toggleSidebar}>
-              <PersonIcon />
-            </button>
+
+              <div className="d-flex align-items-center mb-lg-0 border-start">
+                <button className="btn header ms-3" onClick={toggleSidebar}>
+                  <PersonIcon style={{ color: "#fff" }} />
+                  <KeyboardArrowDownIcon
+                    style={{ color: "#fff", marginLeft: "10px" }}
+                  />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
+        <CSSTransition
+          in={sidebar}
+          timeout={300}
+          classNames="sidebar"
+          nodeRef={sideBarRef}
+          unmountOnExit
+        >
+          <Sidebar ref={sideBarRef} onClose={toggleSidebar} />
+        </CSSTransition>
       </div>
-      <CSSTransition
-        in={sidebar}
-        timeout={300}
-        classNames="sidebar"
-        nodeRef={sideBarRef}
-        unmountOnExit
-      >
-        <Sidebar ref={sideBarRef} onClose={toggleSidebar} />
-      </CSSTransition>
-    </div>
-  </header>;
+    </header>
+  );
 };
 export default Header;

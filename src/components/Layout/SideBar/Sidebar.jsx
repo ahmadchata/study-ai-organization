@@ -2,10 +2,9 @@ import "./Sidebar.css";
 import { Link } from "react-router-dom";
 import { forwardRef, useState } from "react";
 import { useAuth } from "../../../Context/AuthContext";
-import { useLocation } from "react-router-dom";
+import PersonIcon from "@mui/icons-material/Person";
 
 const Sidebar = forwardRef((props, ref) => {
-  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const { logout } = useAuth();
   const { onClose } = props;
@@ -25,35 +24,20 @@ const Sidebar = forwardRef((props, ref) => {
   return (
     <div
       ref={ref}
-      className={`side-bar position-absolute rounded-4 p-4 border border-2`}
+      className={`side-bar bg-white position-absolute rounded-4 p-4 border border-2`}
+      style={{ minWidth: "272px" }}
     >
       <div>
-        <ul className="list-unstyled d-flex justify-content-between align-items-center">
+        <label>Hi, Brazen Tutors</label>
+        <ul className="list-unstyled d-flex justify-content-between align-items-center mt-4">
           <Link
-            to="/dashboard/community"
-            className="text-decoration-none text-dark"
+            to="/dashboard/account"
+            className="text-decoration-none text-dark d-flex"
             onClick={handleLinkClick}
           >
-            <li>Community</li>
+            <PersonIcon style={{ color: "#000", marginRight: "10px" }} />
+            <li>Account</li>
           </Link>
-          {location.pathname === "/dashboard/profile" ? (
-            <Link
-              to="/dashboard/learning"
-              className="text-decoration-none text-dark"
-              onClick={handleLinkClick}
-            >
-              <li className="mx-5">Learning</li>
-            </Link>
-          ) : (
-            <Link
-              to="/dashboard/profile"
-              className="text-decoration-none text-dark"
-              onClick={handleLinkClick}
-            >
-              <li className="mx-5">Profile</li>
-            </Link>
-          )}
-
           <li
             onClick={handleLogout}
             className="text-danger"
@@ -62,20 +46,6 @@ const Sidebar = forwardRef((props, ref) => {
             {loading ? "Logging out..." : "Logout"}
           </li>
         </ul>
-        <Link
-          to="/dashboard/study-ai"
-          className="text-decoration-none"
-          onClick={handleLinkClick}
-        >
-          <button className="py-3 d-flex align-items-center btn secondary-btn mt-4 px-4 py-2">
-            <img
-              src="/assets/logo.svg"
-              width={94}
-              height={19}
-              className="img-fluid"
-            />
-          </button>
-        </Link>
       </div>
     </div>
   );

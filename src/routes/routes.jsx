@@ -4,7 +4,8 @@ import LoadingTracker from "../components/Common/Loading";
 import ProtectedRoute from "./protectedRoutes";
 
 const Login = lazy(() => import("../views"));
-const Dashboard = lazy(() => import("../views/dashboard"));
+const Overview = lazy(() => import("../views/dashboard"));
+const Students = lazy(() => import("../views/dashboard/students"));
 
 const AllRoutes = () => {
   return (
@@ -15,7 +16,16 @@ const AllRoutes = () => {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <Overview />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/students"
+          element={
+            <ProtectedRoute>
+              <Students />
             </ProtectedRoute>
           }
         />
