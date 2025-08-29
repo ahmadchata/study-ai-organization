@@ -1,0 +1,40 @@
+.logo {
+  margin-bottom: 3rem;
+}
+
+.login-container {
+  display: flex;
+  background-color: #0c7a50;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+}
+
+.login-form {
+  width: 383px;
+  margin: auto;
+  padding: 20px;
+}
+
+.login > input {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.login > input:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.form-field {
+  padding: 16px;
+}

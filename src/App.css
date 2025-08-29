@@ -1,0 +1,82 @@
+@import "bootstrap/dist/css/bootstrap.css";
+
+@font-face {
+  font-family: "NeueMontreal";
+  src: url("/assets/fonts/NeueMontreal-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "NeueMontreal";
+  src: url("/assets/fonts/NeueMontreal-LightItalic.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "NeueMontreal";
+  src: url("/assets/fonts/NeueMontreal-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "NeueMontreal";
+  src: url("/assets/fonts/NeueMontreal-Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "NeueMontreal";
+  src: url("/assets/fonts/NeueMontreal-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "NeueMontreal";
+  src: url("/assets/fonts/NeueMontreal-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "NeueMontreal";
+  src: url("/assets/fonts/NeueMontreal-BoldItalic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: "border-box";
+}
+
+body {
+  font-family: "NeueMontreal", "Segoe UI", sans-serif;
+}
+
+.default-btn {
+  padding: 16px;
+  color: #fff;
+  border-radius: 12px;
+  background-color: #448565;
+}
+
+.default-btn:hover {
+  padding: 16px;
+  color: #fff;
+  border-radius: 12px;
+  border: 1px solid #eaeaea;
+  background-color: #3f9574;
+}
+
+.default-btn:disabled {
+  padding: 16px;
+  color: #fff;
+  border-radius: 12px;
+  background-color: #929292;
+}
