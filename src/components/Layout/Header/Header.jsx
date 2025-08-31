@@ -9,6 +9,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import SpeakerGroupIcon from "@mui/icons-material/SpeakerGroup";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import MenuLogo from "../../../assets/menu-white.svg";
 
 const Header = () => {
   const [sidebar, setSidebar] = useState(false);
@@ -33,10 +34,13 @@ const Header = () => {
       <div className="position-relative w-100">
         <div className="d-flex justify-content-between align-items-center">
           <div>
+            <button className="btn d-lg-none" onClick={toggleSidebar}>
+              <img src={MenuLogo} alt="Menu" className="img-fluid" />
+            </button>
             <img
               src="/assets/logo.svg"
               alt="Study AI logo"
-              className="img-fluid"
+              className="img-fluid ms-4 ms-lg-0"
             />
             <div className="text-white mt-4">
               <label className="header-label">Brazen Tutors</label>
@@ -45,7 +49,7 @@ const Header = () => {
               </label>
             </div>
           </div>
-          <div className="d-flex justify-content-between align-items-center">
+          <div className="d-none d-lg-flex justify-content-between align-items-center">
             <div className="header-tabs">
               <Link
                 className={`text-decoration-none text-white ${

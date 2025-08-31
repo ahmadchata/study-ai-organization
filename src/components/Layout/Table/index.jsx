@@ -90,7 +90,7 @@ const Table = ({ columns, data, rowProps }) => {
 
   return (
     <div className="tanstack-table-wrapper p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-block d-lg-flex justify-content-between align-items-center mb-4">
         <div className="table-search-bar px-2">
           <input
             type="text"
@@ -101,7 +101,7 @@ const Table = ({ columns, data, rowProps }) => {
           />
           <SearchIcon />
         </div>
-        <div className="d-flex gap-2 position-relative">
+        <div className="d-flex gap-2 position-relative mt-4 mt-lg-0">
           <button
             className="btn dsh-btn d-inline-flex align-items-center"
             onClick={toggleExportPdf}
