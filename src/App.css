@@ -80,3 +80,19 @@ body {
   border-radius: 12px;
   background-color: #929292;
 }
+
+.green-text {
+  color: #0c7a50;
+}
+
+.dsh-btn {
+  padding: 10px;
+  border: 1px solid #eaeaea;
+  border-radius: 18px;
+}
+
+.dsh-btn:hover {
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 18px;
+}

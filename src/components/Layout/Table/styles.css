@@ -1,0 +1,95 @@
+.tanstack-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.tanstack-table th,
+.tanstack-table td {
+  padding: 10px 24px;
+  text-align: left;
+}
+
+.tanstack-table th {
+  background: #f5f5f5;
+  color: #929292;
+  font-weight: 400;
+}
+
+.tanstack-table tbody tr:nth-child(even) {
+  background: #f5f5f5;
+}
+
+.tanstack-table tbody tr:nth-child(odd) {
+  background: #fff;
+}
+
+.tanstack-table tbody td:nth-child(odd) {
+  color: #929292;
+}
+
+.tanstack-table tbody td:nth-child(even) {
+  color: #333333;
+}
+
+.tanstack-table tbody tr:hover {
+  background: #f1f1f1;
+}
+
+.tanstack-table-wrapper {
+  border: 1px solid #eaeaea;
+  border-radius: 32px;
+  overflow-x: auto;
+}
+
+.table-search-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f5f5f5;
+  max-width: 273px;
+  border-radius: 12px;
+}
+
+.table-search-bar input {
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  transition: none;
+}
+
+.table-search-bar input:focus,
+.table-search-bar input:active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  background-color: #f5f5f5;
+}
+
+.table-search-bar input::placeholder {
+  color: #929292;
+  opacity: 1;
+}
+
+.context-menu {
+  top: 60px;
+  right: 0;
+}
+
+.csv-btn {
+  background-color: #0c7a50;
+}
+
+.pdf-btn {
+  background-color: #ab2c48;
+}
+
+.csv-btn:hover {
+  background-color: #2a795b;
+}
+
+.pdf-btn:hover {
+  background-color: #a33e54;
+}
