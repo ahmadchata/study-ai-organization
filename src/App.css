@@ -63,7 +63,7 @@ body {
   padding: 16px;
   color: #fff;
   border-radius: 12px;
-  background-color: #448565;
+  background-color: #0c7a50;
 }
 
 .default-btn:hover {
@@ -95,4 +95,8 @@ body {
   padding: 10px;
   border: 1px solid #000;
   border-radius: 18px;
+}
+
+.pointer {
+  cursor: pointer;
 }

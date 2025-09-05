@@ -11,18 +11,6 @@
   border-radius: 50%;
 }
 
-.context-menu {
-  position: absolute;
-  right: 0;
-  top: -40px;
-  z-index: 100;
-  background: #fff;
-  border: 1px solid #eaeaea;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  min-width: 196px;
-}
-
 .red-dot {
   background-color: #ab2c48;
   width: 8px;

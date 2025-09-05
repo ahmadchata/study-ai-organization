@@ -110,7 +110,7 @@ export default function Login() {
             loading="lazy"
           />
           <p className="m-0 p-0 fs-5">
-            <span className="text-white">Welcome back, enter your details</span>
+            <span className="text-black">Welcome back, enter your details</span>
           </p>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="row mt-4">

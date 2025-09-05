@@ -11,6 +11,7 @@ const Sidebar = forwardRef((props, ref) => {
   const [loading, setLoading] = useState(false);
   const { logout } = useAuth();
   const { onClose } = props;
+  const { orgName } = props;
 
   const handleLinkClick = () => {
     if (onClose) {
@@ -31,12 +32,14 @@ const Sidebar = forwardRef((props, ref) => {
       style={{ minWidth: "272px" }}
     >
       <div>
-        <label>Hi, Brazen Tutors</label>
-        <div className="d-block d-lg-none my-5 justify-content-between align-items-center">
-          <div className="d-flex justify-content-between">
+        <label>Hi, {orgName}</label>
+        <div className="d-block d-lg-none mt-5 justify-content-between align-items-center">
+          <div className="d-fle justify-content-between">
             <Link
-              className={`text-decoration-none ${
-                location.pathname === "/dashboard" ? "green-text" : "text-dark"
+              className={`text-decoration-none d-flex ${
+                location.pathname === "/dashboard"
+                  ? "green-text fw-bold"
+                  : "text-dark"
               }`}
               to={"/dashboard"}
               onClick={handleLinkClick}
@@ -46,9 +49,9 @@ const Sidebar = forwardRef((props, ref) => {
             </Link>
 
             <Link
-              className={`text-decoration-none ${
+              className={`text-decoration-none d-flex my-3 ${
                 location.pathname === "/dashboard/students"
-                  ? "green-text"
+                  ? "green-text fw-bold"
                   : "text-dark"
               }`}
               to={"/dashboard/students"}
@@ -59,9 +62,9 @@ const Sidebar = forwardRef((props, ref) => {
             </Link>
 
             <Link
-              className={`text-decoration-none ${
+              className={`text-decoration-none d-flex ${
                 location.pathname.includes("/dashboard/subscriptions")
-                  ? "green-text"
+                  ? "green-text fw-bold"
                   : "text-dark"
               }`}
               to={"/dashboard/subscriptions"}
@@ -74,18 +77,18 @@ const Sidebar = forwardRef((props, ref) => {
             </Link>
           </div>
         </div>
-        <ul className="list-unstyled d-flex justify-content-between align-items-center mt-4">
+        <ul className="list-unstyled mt-3 mt-lg-4 d-block d-lg-flex justify-content-between">
           <Link
             to="/dashboard/account"
             className="text-decoration-none text-dark d-flex"
             onClick={handleLinkClick}
           >
-            <PersonIcon style={{ color: "#000", marginRight: "10px" }} />
+            <PersonIcon style={{ color: "#000", marginRight: "8px" }} />
             <li>Account</li>
           </Link>
           <li
             onClick={handleLogout}
-            className="text-danger"
+            className="text-danger mt-5 mt-lg-0"
             style={{ cursor: "pointer" }}
           >
             {loading ? "Logging out..." : "Logout"}

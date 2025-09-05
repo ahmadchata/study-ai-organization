@@ -3,118 +3,187 @@ import Table from "../../Layout/Table";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
-import AddIcon from "@mui/icons-material/Add";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { DashboardAPI } from "../../../api/DashboardAPI";
+import { SubscriptionAPI } from "../../../api/SubscriptionAPI";
+import LoadingTracker from "../../Common/Loading";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { useSnackbar } from "notistack";
+import dayjs from "dayjs";
 import "./styles.css";
-
-const getColumns = (selected, onSelectAll, onSelectRow, hoveredRow) => [
-  {
-    id: "select",
-    header: () => (
-      <input
-        type="checkbox"
-        checked={selected.length === data.length && data.length > 0}
-        indeterminate={
-          selected.length > 0 && selected.length < data.length
-            ? "indeterminate"
-            : undefined
-        }
-        onChange={onSelectAll}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <input
-        type="checkbox"
-        checked={selected.includes(row.original.name)}
-        onChange={() => onSelectRow(row.original.name)}
-        aria-label={`Select ${row.original.name}`}
-      />
-    ),
-    size: 32,
-  },
-  {
-    header: "Name",
-    accessorKey: "name",
-  },
-  {
-    header: "Access codes",
-    accessorKey: "accessCodes",
-    cell: ({ row }) => (
-      <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-        {row.original.accessCodes}
-        {hoveredRow === row.id && (
-          <ContentCopyIcon
-            style={{ color: "#000", fontSize: "16px", cursor: "pointer" }}
-          />
-        )}
-      </span>
-    ),
-  },
-  {
-    header: "Study points",
-    accessorKey: "studyPoints",
-  },
-  {
-    header: "Last login",
-    accessorKey: "lastLogin",
-  },
-  {
-    header: "Subscription status",
-    accessorKey: "subscriptionStatus",
-    cell: ({ row }) => (
-      <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-        <span
-          className={
-            row.original.subscriptionStatus === "Active"
-              ? "green-dot"
-              : "red-dot"
-          }
-        ></span>
-        {row.original.subscriptionStatus}
-      </span>
-    ),
-  },
-  {
-    header: "Action",
-    accessorKey: "action",
-    cell: () => (
-      <button className="btn">
-        <MoreHorizIcon />
-      </button>
-    ),
-  },
-];
-
-const data = [
-  {
-    name: "Alice Johnson",
-    accessCodes: "AC123, AC456",
-    studyPoints: 120,
-    lastLogin: "2025-08-30",
-    subscriptionStatus: "Active",
-    action: "",
-  },
-  {
-    name: "Bob Smith",
-    accessCodes: "AC789",
-    studyPoints: 95,
-    lastLogin: "2025-08-29",
-    subscriptionStatus: "Inactive",
-    action: "",
-  },
-  {
-    name: "Charlie Lee",
-    accessCodes: "AC321, AC654",
-    studyPoints: 150,
-    lastLogin: "2025-08-28",
-    subscriptionStatus: "Active",
-    action: "",
-  },
-];
 
 const Students = () => {
   const [selected, setSelected] = useState([]);
   const [hoveredRow, setHoveredRow] = useState(null);
+  const [actionMenuRow, setActionMenuRow] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
+
+  const { data: students, isFetching } = useQuery({
+    queryKey: ["students"],
+    refetchOnMount: false,
+    queryFn: () => DashboardAPI.getStudents(true),
+  });
+
+  const mutation = useMutation({
+    mutationFn: (code) => {
+      setLoading(true);
+      const response = SubscriptionAPI.revokeSubscription(code, true);
+      return response;
+    },
+    onSuccess: () => {
+      setLoading(false);
+      enqueueSnackbar("Success", {
+        autoHideDuration: 10000,
+        style: {
+          backgroundColor: "#fff",
+          color: "0c7a50",
+        },
+      });
+      queryClient.invalidateQueries("students");
+    },
+    onError: (error) => {
+      setLoading(false);
+      enqueueSnackbar(error?.response?.data?.message, {
+        variant: "error",
+      });
+    },
+  });
+
+  const revokeAccess = (subCode) => {
+    mutation.mutate({
+      subscription_code: subCode,
+    });
+  };
+
+  const data = students?.students;
+
+  const getColumns = (selected, onSelectAll, onSelectRow, hoveredRow) => [
+    {
+      id: "select",
+      header: () => (
+        <input
+          type="checkbox"
+          checked={selected?.length === data?.length && data?.length > 0}
+          indeterminate={
+            selected?.length > 0 && selected?.length < data?.length
+              ? "indeterminate"
+              : undefined
+          }
+          onChange={onSelectAll}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <input
+          type="checkbox"
+          checked={selected.includes(row.original.name)}
+          onChange={() => onSelectRow(row.original.name)}
+          aria-label={`Select ${row.original.name}`}
+        />
+      ),
+      size: 32,
+    },
+    {
+      header: "Name",
+      accessorKey: "student_name",
+    },
+    {
+      header: "Access codes",
+      accessorKey: "active_subscription?.subscription_code",
+      cell: ({ row }) => (
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          {row.original.active_subscription?.subscription_code}
+          {hoveredRow === row.id && (
+            <ContentCopyIcon
+              style={{ color: "#000", fontSize: "16px", cursor: "pointer" }}
+            />
+          )}
+        </span>
+      ),
+    },
+    {
+      header: "Study points",
+      accessorKey: "studyPoints",
+      cell: ({ row }) => (
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          {row.original.studyPoints}
+        </span>
+      ),
+    },
+    {
+      header: "Last login",
+      accessorKey: "lastLogin",
+      cell: ({ row }) => (
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          {dayjs(row.original.last_login).format("DD-MMM")}
+        </span>
+      ),
+    },
+    {
+      header: "Days remaining",
+      accessorKey: "days_remaining",
+      cell: ({ row }) => (
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          {row.original.days_remaining}
+        </span>
+      ),
+    },
+    {
+      header: "Subscription status",
+      accessorKey: "subscription_status",
+      cell: ({ row }) => (
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <span
+            className={
+              row.original.subscription_status === "Active"
+                ? "green-dot"
+                : "red-dot"
+            }
+          ></span>
+          {row.original.subscription_status}
+        </span>
+      ),
+    },
+    {
+      header: "Action",
+      accessorKey: "action",
+      cell: ({ row }) => (
+        <div style={{ position: "relative" }}>
+          <button className="btn" onClick={() => setActionMenuRow(row.id)}>
+            <MoreHorizIcon />
+          </button>
+          {actionMenuRow === row.id && row.original.active_subscription && (
+            <ClickAwayListener onClickAway={() => setActionMenuRow(null)}>
+              <div className="context-menu">
+                <button
+                  className="dropdown-item w-100 text-start px-3 py-2 text-danger d-flex align-items-center"
+                  style={{ border: "none", background: "none" }}
+                  disabled={loading}
+                  onClick={() =>
+                    revokeAccess(
+                      row.original.active_subscription?.subscription_code
+                    )
+                  }
+                >
+                  {loading ? (
+                    "Revoking..."
+                  ) : (
+                    <>
+                      <DeleteOutlineIcon /> Revoke Access
+                    </>
+                  )}
+                </button>
+              </div>
+            </ClickAwayListener>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
@@ -144,9 +213,13 @@ const Students = () => {
     onMouseLeave: () => setHoveredRow(null),
   });
 
+  if (isFetching) {
+    return <LoadingTracker />;
+  }
+
   return (
     <div className="px-lg-5 px-2">
-      <div className="my-5">
+      <div className="my-5 d-flex justify-content-between justify-content-lg-start">
         <button className="btn dsh-btn d-inline-flex align-items-center">
           <span className="icon-btn d-inline-flex align-items-center me-2">
             <PeopleOutlineIcon style={{ fontSize: "18px" }} />
@@ -154,10 +227,10 @@ const Students = () => {
           Total Students:{" "}
           <span className="ms-2 green-text">{data?.length}</span>
         </button>
-        <button className="ms-4 btn dsh-btn green-text d-inline-flex align-items-center py-3 px-3">
+        {/* <button className="ms-4 btn dsh-btn green-text d-inline-flex align-items-center py-3 px-3">
           <AddIcon />
           Add students
-        </button>
+        </button> */}
       </div>
       <Table columns={columns} data={data} rowProps={rowProps} />
     </div>

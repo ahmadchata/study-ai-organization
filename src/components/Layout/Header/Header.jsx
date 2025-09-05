@@ -10,11 +10,13 @@ import SpeakerGroupIcon from "@mui/icons-material/SpeakerGroup";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MenuLogo from "../../../assets/menu-white.svg";
+import { useAuth } from "../../../Context/AuthContext";
 
 const Header = () => {
   const [sidebar, setSidebar] = useState(false);
   const sideBarRef = useRef(null);
   const location = useLocation();
+  const { user } = useAuth();
 
   const currentPage = {
     "/dashboard": "Overview",
@@ -28,7 +30,7 @@ const Header = () => {
 
   return (
     <header
-      className="header-bg m-0 p-0 d-flex align-items-center px-lg-5 px-2 py-4"
+      className="header-bg m-0 p-0 d-flex align-items-center px-lg-5 px-2 py-4 sticky-top"
       style={{ minHeight: "65px" }}
     >
       <div className="position-relative w-100">
@@ -37,13 +39,17 @@ const Header = () => {
             <button className="btn d-lg-none" onClick={toggleSidebar}>
               <img src={MenuLogo} alt="Menu" className="img-fluid" />
             </button>
-            <img
-              src="/assets/logo.svg"
-              alt="Study AI logo"
-              className="img-fluid ms-4 ms-lg-0"
-            />
+            <Link to={"/dashboard"}>
+              <img
+                src="/assets/logo-white.svg"
+                alt="Study AI logo"
+                className="img-fluid ms-4 ms-lg-0"
+              />
+            </Link>
             <div className="text-white mt-4">
-              <label className="header-label">Brazen Tutors</label>
+              <label className="header-label">
+                {user?.organization_profile?.organization_name}
+              </label>
               <label className="ms-3 fw-regular">
                 {currentPage[location.pathname] ?? ""}
               </label>
@@ -79,11 +85,11 @@ const Header = () => {
 
               <Link
                 className={`text-decoration-none text-white me-3 ${
-                  location.pathname.includes("/dashboard/learning")
+                  location.pathname.includes("/dashboard/subscriptions")
                     ? "header-active"
                     : "header"
                 }`}
-                to={"/dashboard/learning"}
+                to={"/dashboard/subscriptions"}
               >
                 <SpeakerGroupIcon
                   style={{ color: "#fff", marginRight: "10px" }}
@@ -109,7 +115,11 @@ const Header = () => {
           nodeRef={sideBarRef}
           unmountOnExit
         >
-          <Sidebar ref={sideBarRef} onClose={toggleSidebar} />
+          <Sidebar
+            ref={sideBarRef}
+            onClose={toggleSidebar}
+            orgName={user?.organization_profile?.organization_name}
+          />
         </CSSTransition>
       </div>
     </header>
