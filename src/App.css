@@ -81,6 +81,21 @@ body {
   background-color: #929292;
 }
 
+.secondary-btn {
+  padding: 16px;
+  color: #000;
+  border-radius: 12px;
+  background-color: #f1f1f1;
+  transition: all 300ms ease-out;
+}
+
+.secondary-btn:hover {
+  padding: 16px;
+  color: #000;
+  border-radius: 12px;
+  background-color: #e9e9e9;
+}
+
 .green-text {
   color: #0c7a50;
 }

@@ -9,18 +9,39 @@ import { DashboardAPI } from "../../../api/DashboardAPI";
 import { useQuery } from "@tanstack/react-query";
 import LoadingTracker from "../../Common/Loading";
 import { Link } from "react-router-dom";
+import { useSnackbar } from "notistack";
 
 const Subscriptions = () => {
   const [selected, setSelected] = useState([]);
   const [hoveredRow, setHoveredRow] = useState(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const { data: subscriptions, isFetching } = useQuery({
     queryKey: ["subscriptions"],
-    refetchOnMount: false,
     queryFn: () => DashboardAPI.getSubscriptions(true),
   });
 
   const data = subscriptions?.subscriptions;
+
+  const copyToClipboard = (text) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+    enqueueSnackbar("Access code copied", {
+      autoHideDuration: 1000,
+      style: {
+        backgroundColor: "#fff",
+        color: "#0c7a50",
+      },
+    });
+  };
 
   const getColumns = (selected, onSelectAll, onSelectRow, hoveredRow) => [
     {
@@ -57,6 +78,7 @@ const Subscriptions = () => {
           {hoveredRow === row.id && (
             <ContentCopyIcon
               style={{ color: "#000", fontSize: "16px", cursor: "pointer" }}
+              onClick={() => copyToClipboard(row.original.subscription_code)}
             />
           )}
         </span>

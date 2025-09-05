@@ -24,7 +24,6 @@ const Students = () => {
 
   const { data: students, isFetching } = useQuery({
     queryKey: ["students"],
-    refetchOnMount: false,
     queryFn: () => DashboardAPI.getStudents(true),
   });
 
@@ -40,10 +39,11 @@ const Students = () => {
         autoHideDuration: 10000,
         style: {
           backgroundColor: "#fff",
-          color: "0c7a50",
+          color: "#0c7a50",
         },
       });
-      queryClient.invalidateQueries("students");
+      queryClient.invalidateQueries({ queryKey: ["students"] });
+      queryClient.invalidateQueries({ queryKey: ["overview"] });
     },
     onError: (error) => {
       setLoading(false);

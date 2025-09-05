@@ -2,8 +2,21 @@ import "./styles.css";
 import SpeakerGroupIcon from "@mui/icons-material/SpeakerGroup";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import TopPerformers from "../TopPerformers";
+import { useQuery } from "@tanstack/react-query";
+import { DashboardAPI } from "../../api/DashboardAPI";
+import LoadingTracker from "../Common/Loading";
 
 const Home = () => {
+  const { data: overview, isFetching } = useQuery({
+    queryKey: ["overview"],
+    refetchOnMount: false,
+    queryFn: () => DashboardAPI.overview(true),
+  });
+
+  if (isFetching) {
+    return <LoadingTracker />;
+  }
+
   return (
     <div className="px-lg-5 px-2 py-3 py-lg-5">
       <div className="summary-bg px-3 py-4">
@@ -14,7 +27,9 @@ const Home = () => {
             <div className="bg-white summary-card p-3">
               <label>Total subscriptions</label>
               <div className="mt-5 d-flex align-items-center justify-content-between">
-                <h5 className="">35</h5>
+                <h5 className="">
+                  {overview?.statistics?.total_subscriptions}
+                </h5>
                 <div className="dsh-btn">
                   <SpeakerGroupIcon style={{ color: "#0C7A50" }} />
                 </div>
@@ -26,7 +41,9 @@ const Home = () => {
             <div className="bg-white summary-card p-3">
               <label>Active subscriptions</label>
               <div className="mt-5 d-flex align-items-center justify-content-between">
-                <h5 className="">35</h5>
+                <h5 className="">
+                  {overview?.statistics?.students_with_subscriptions}
+                </h5>
                 <div className="dsh-btn">
                   <SpeakerGroupIcon style={{ color: "#0C7A50" }} />
                 </div>
@@ -38,7 +55,7 @@ const Home = () => {
             <div className="bg-white summary-card p-3">
               <label>Total students</label>
               <div className="mt-5 d-flex align-items-center justify-content-between">
-                <h5 className="">35</h5>
+                <h5 className="">{overview?.statistics?.total_students}</h5>
                 <div className="dsh-btn">
                   <PeopleOutlineIcon style={{ color: "#0C7A50" }} />
                 </div>

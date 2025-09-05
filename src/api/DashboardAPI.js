@@ -15,6 +15,29 @@ export const DashboardAPI = {
     return response.data.data;
   },
 
+  updateProfile: async function (name, phone, email, cancel = false) {
+    const response = await api.request({
+      url: `/method/studyai.apis.organization.update_organization_profile?contact_person=${name}&contact_number=${phone}&contact_person_email=${email}`,
+      method: "PUT",
+      signal: cancel
+        ? cancelApiObject[this.updateProfile.name].handleRequestCancellation()
+            .signal
+        : undefined,
+    });
+    return response.data.data;
+  },
+
+  overview: async function (cancel = false) {
+    const response = await api.request({
+      url: `/method/studyai.apis.organization.get_organization_overview`,
+      method: "GET",
+      signal: cancel
+        ? cancelApiObject[this.overview.name].handleRequestCancellation().signal
+        : undefined,
+    });
+    return response.data.data;
+  },
+
   getStudents: async function (cancel = false) {
     const response = await api.request({
       url: `/method/studyai.apis.organization.get_organization_students`,
@@ -25,6 +48,18 @@ export const DashboardAPI = {
         : undefined,
     });
     return response.data.data;
+  },
+
+  getProfile: async function (cancel = false) {
+    const response = await api.request({
+      url: `/method/studyai.apis.organization.get_organization_profile`,
+      method: "GET",
+      signal: cancel
+        ? cancelApiObject[this.getProfile.name].handleRequestCancellation()
+            .signal
+        : undefined,
+    });
+    return response.data;
   },
 
   login: async function (user, cancel = false) {

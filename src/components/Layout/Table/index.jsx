@@ -102,7 +102,7 @@ const Table = ({ columns, data, rowProps }) => {
     doc.save("table-data.pdf");
   };
 
-  if (data?.length === 0) {
+  if (data.length === 0) {
     return <p>No data</p>;
   }
 
