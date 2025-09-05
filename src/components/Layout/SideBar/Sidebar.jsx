@@ -80,7 +80,11 @@ const Sidebar = forwardRef((props, ref) => {
         <ul className="list-unstyled mt-3 mt-lg-4 d-block d-lg-flex justify-content-between">
           <Link
             to="/dashboard/account"
-            className="text-decoration-none text-dark d-flex"
+            className={`text-decoration-none d-flex ${
+              location.pathname.includes("/dashboard/account")
+                ? "green-text fw-bold"
+                : "text-dark"
+            }`}
             onClick={handleLinkClick}
           >
             <PersonIcon style={{ color: "#000", marginRight: "8px" }} />

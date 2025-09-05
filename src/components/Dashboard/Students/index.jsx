@@ -36,7 +36,7 @@ const Students = () => {
     onSuccess: () => {
       setLoading(false);
       enqueueSnackbar("Success", {
-        autoHideDuration: 10000,
+        autoHideDuration: 1000,
         style: {
           backgroundColor: "#fff",
           color: "#0c7a50",
@@ -60,6 +60,26 @@ const Students = () => {
   };
 
   const data = students?.students;
+
+  const copyToClipboard = (text) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+    enqueueSnackbar("Access code copied", {
+      autoHideDuration: 1000,
+      style: {
+        backgroundColor: "#fff",
+        color: "#0c7a50",
+      },
+    });
+  };
 
   const getColumns = (selected, onSelectAll, onSelectRow, hoveredRow) => [
     {
@@ -100,6 +120,7 @@ const Students = () => {
           {hoveredRow === row.id && (
             <ContentCopyIcon
               style={{ color: "#000", fontSize: "16px", cursor: "pointer" }}
+              onClick={() => copyToClipboard(row.original.subscription_code)}
             />
           )}
         </span>
