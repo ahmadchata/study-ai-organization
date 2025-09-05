@@ -4,7 +4,7 @@ import { defineCancelApiObject } from "./configs/axiosUtils";
 export const AuthAPI = {
   checkAuth: async function (cancel = false) {
     const response = await api.request({
-      url: `/method/studyai.apis.auth.check_auth`,
+      url: `/method/studyai.apis.auth.check_auth?type=Organization`,
       method: "GET",
       signal: cancel
         ? cancelApiObject[this.checkAuth.name].handleRequestCancellation()
