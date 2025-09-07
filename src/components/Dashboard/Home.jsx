@@ -5,6 +5,7 @@ import TopPerformers from "../TopPerformers";
 import { useQuery } from "@tanstack/react-query";
 import { DashboardAPI } from "../../api/DashboardAPI";
 import LoadingTracker from "../Common/Loading";
+import EngagementChart from "../Common/Chart";
 
 const Home = () => {
   const { data: overview, isFetching } = useQuery({
@@ -68,6 +69,8 @@ const Home = () => {
       <div className="row mx-0 mt-5">
         <div className="d-none d-lg-block col-12 col-lg-7 bg-white summary-card p-3 me-4">
           <h6>Engagement</h6>
+
+          <EngagementChart />
         </div>
 
         <div className="summary-bg col-12 col-lg p-3">
