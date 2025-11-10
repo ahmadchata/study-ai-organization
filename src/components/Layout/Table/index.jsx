@@ -64,7 +64,26 @@ const Table = ({ columns, data, rowProps }) => {
         .filter((cell) => cell.column.id !== "select")
         .map((cell) => {
           const val = cell.getValue();
-          return typeof val === "string" || typeof val === "number" ? val : "";
+          if (typeof val === "string" || typeof val === "number") return val;
+
+          // Try to resolve a printable value from the original row using accessorKey
+          const accessor = cell.column.columnDef.accessorKey || cell.column.id;
+          const orig = row.original?.[accessor];
+
+          // Special-case: student_info -> Active / Inactive
+          if (accessor === "student_info") {
+            return orig !== null && typeof orig !== "undefined"
+              ? "Active"
+              : "Inactive";
+          }
+
+          if (typeof orig === "string" || typeof orig === "number") return orig;
+          if (orig === null || typeof orig === "undefined") return "";
+          try {
+            return JSON.stringify(orig);
+          } catch {
+            return "";
+          }
         })
     );
     const csv = Papa.unparse({ fields: headers, data: rows });
@@ -95,14 +114,31 @@ const Table = ({ columns, data, rowProps }) => {
         .filter((cell) => cell.column.id !== "select")
         .map((cell) => {
           const val = cell.getValue();
-          return typeof val === "string" || typeof val === "number" ? val : "";
+          if (typeof val === "string" || typeof val === "number") return val;
+
+          const accessor = cell.column.columnDef.accessorKey || cell.column.id;
+          const orig = row.original?.[accessor];
+
+          if (accessor === "student_info") {
+            return orig !== null && typeof orig !== "undefined"
+              ? "Active"
+              : "Inactive";
+          }
+
+          if (typeof orig === "string" || typeof orig === "number") return orig;
+          if (orig === null || typeof orig === "undefined") return "";
+          try {
+            return JSON.stringify(orig);
+          } catch {
+            return "";
+          }
         })
     );
     autoTable(doc, { head: headers, body: rows });
     doc.save("table-data.pdf");
   };
 
-  if (data.length === 0) {
+  if (data?.length === 0) {
     return <p>No data</p>;
   }
 

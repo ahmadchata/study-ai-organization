@@ -104,7 +104,7 @@ const Subscriptions = () => {
     },
     {
       header: "Subscription status",
-      accessorKey: "subscriptionStatus",
+      accessorKey: "student_info",
       cell: ({ row }) => (
         <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
           <span
