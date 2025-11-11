@@ -8,6 +8,24 @@
 .grey-text {
   color: #929292;
 }
+/* 
+.form-input > input {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+} */
+
+.form-input > input:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
 
 .profile-field {
   border-radius: 20px;
@@ -18,4 +36,44 @@
   padding: 9xp 18px;
   border: 1px solid #eaeaea;
   border-radius: 20px;
+}
+
+.change-password-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.change-password-modal {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 420px;
+  max-width: 95%;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+}
+
+.change-password > input {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.change-password > input:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }

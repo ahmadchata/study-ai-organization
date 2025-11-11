@@ -62,6 +62,18 @@ export const DashboardAPI = {
     return response.data;
   },
 
+  topPerformers: async function (cancel = false) {
+    const response = await api.request({
+      url: `/method/studyai.apis.organization.get_top_performing_students?limit=50`,
+      method: "GET",
+      signal: cancel
+        ? cancelApiObject[this.topPerformers.name].handleRequestCancellation()
+            .signal
+        : undefined,
+    });
+    return response.data;
+  },
+
   login: async function (user, cancel = false) {
     const response = await api.request({
       url: `/method/studyai.apis.organization.login`,

@@ -26,6 +26,19 @@ export const AuthAPI = {
     return response.data;
   },
 
+  changePassword: async function (password, cancel = false) {
+    const response = await api.request({
+      url: `/method/studyai.apis.auth.reset_password`,
+      method: "POST",
+      data: password,
+      signal: cancel
+        ? cancelApiObject[this.changePassword.name].handleRequestCancellation()
+            .signal
+        : undefined,
+    });
+    return response.data;
+  },
+
   delete: async function (email, cancel = false) {
     const response = await api.request({
       url: `/method/studyai.apis.auth.logout`,

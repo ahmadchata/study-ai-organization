@@ -67,15 +67,21 @@ const Home = () => {
       </div>
 
       <div className="row mx-0 mt-5">
-        <div className="d-none d-lg-block col-12 col-lg-7 bg-white summary-card p-3 me-4">
+        <div className="d-none d-xl-block col-12 col-xl-7 bg-white summary-card p-3 me-4">
           <h6>Engagement</h6>
-
           <EngagementChart />
         </div>
 
         <div className="summary-bg col-12 col-lg p-3">
           <h6>Top Performers</h6>
-          <div className="bg-white summary-card mt-4">
+          <div
+            className="bg-white summary-card mt-4"
+            style={{
+              maxHeight: "400px",
+              overflowY: "auto",
+              scrollBehavior: "smooth",
+            }}
+          >
             <TopPerformers />
           </div>
         </div>
