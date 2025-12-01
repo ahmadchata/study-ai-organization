@@ -34,18 +34,20 @@ const Header = () => {
       style={{ minHeight: "65px" }}
     >
       <div className="position-relative w-100">
-        <div className="d-flex justify-content-between align-items-center">
+        <div className="d-block d-lg-flex justify-content-between align-items-center">
           <div>
-            <button className="btn d-lg-none" onClick={toggleSidebar}>
-              <img src={MenuLogo} alt="Menu" className="img-fluid" />
-            </button>
-            <Link to={"/dashboard"}>
-              <img
-                src="/assets/logo-white.svg"
-                alt="Study AI logo"
-                className="img-fluid ms-4 ms-lg-0"
-              />
-            </Link>
+            <div className="w-100 d-flex justify-content-between align-items-center">
+              <Link to={"/dashboard"}>
+                <img
+                  src="/assets/logo-white.svg"
+                  alt="Study AI logo"
+                  className="img-fluid"
+                />
+              </Link>
+              <button className="btn d-lg-none" onClick={toggleSidebar}>
+                <img src={MenuLogo} alt="Menu" className="img-fluid" />
+              </button>
+            </div>
             <div className="text-white mt-4">
               <label className="header-label">
                 {user?.organization_profile?.organization_name}

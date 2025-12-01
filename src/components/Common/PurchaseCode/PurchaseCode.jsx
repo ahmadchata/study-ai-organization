@@ -74,6 +74,7 @@ const PurchaseCode = () => {
   const config = {
     reference: new Date().getTime().toString(),
     email: user?.user?.email,
+    // email: "ahmadchata@gmail.com",
     amount: parseInt((selected * quantity).toFixed(2)) * 100,
     publicKey: "pk_live_0e5f69ef74c0a55f7304208081f264ab6b2052ed",
     // publicKey: "pk_test_01eeb95bc21f2f8f531ddaed08da9f5a0c1114c1",

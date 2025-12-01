@@ -137,10 +137,12 @@ const Students = () => {
     },
     {
       header: "Last login",
-      accessorKey: "lastLogin",
+      accessorKey: "last_login",
       cell: ({ row }) => (
         <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {dayjs(row.original.last_login).format("DD-MMM")}
+          {row.original.last_login
+            ? dayjs(row.original.last_login).format("DD-MMM")
+            : "No login"}
         </span>
       ),
     },
