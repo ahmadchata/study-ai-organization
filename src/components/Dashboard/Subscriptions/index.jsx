@@ -172,7 +172,12 @@ const Subscriptions = () => {
           </button>
         </Link>
       </div>
-      <Table columns={columns} data={data} rowProps={rowProps} />
+      <Table
+        columns={columns}
+        data={data}
+        rowProps={rowProps}
+        statusAccessor="student_info"
+      />
     </div>
   );
 };

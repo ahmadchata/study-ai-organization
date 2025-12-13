@@ -233,7 +233,7 @@ const PurchaseCode = () => {
               onClick={subscribe}
               className="py-2 mt-3 btn default-btn w-100"
             >
-              {loading ? "loading..." : "Subscribe"}
+              {loading ? "Loading..." : "Subscribe"}
             </button>
           )}
           <p className="text-center mt-2 extra-small">

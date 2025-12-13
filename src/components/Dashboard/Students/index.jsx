@@ -117,12 +117,13 @@ const Students = () => {
       cell: ({ row }) => (
         <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
           {row.original.active_subscription?.subscription_code}
-          {hoveredRow === row.id && (
-            <ContentCopyIcon
-              style={{ color: "#000", fontSize: "16px", cursor: "pointer" }}
-              onClick={() => copyToClipboard(row.original.subscription_code)}
-            />
-          )}
+          {hoveredRow === row.id &&
+            row.original.active_subscription?.subscription_code && (
+              <ContentCopyIcon
+                style={{ color: "#000", fontSize: "16px", cursor: "pointer" }}
+                onClick={() => copyToClipboard(row.original.subscription_code)}
+              />
+            )}
         </span>
       ),
     },
@@ -255,7 +256,12 @@ const Students = () => {
           Add students
         </button> */}
       </div>
-      <Table columns={columns} data={data} rowProps={rowProps} />
+      <Table
+        columns={columns}
+        data={data}
+        rowProps={rowProps}
+        statusAccessor="subscription_status"
+      />
     </div>
   );
 };

@@ -12,10 +12,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import LaunchIcon from "@mui/icons-material/Launch";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-const Table = ({ columns, data, rowProps }) => {
+const Table = ({ columns, data, rowProps, statusAccessor }) => {
   const [search, setSearch] = useState("");
   const [exportTable, setExportTable] = useState(false);
   const [expandedRows, setExpandedRows] = useState([]);
+  const [statusFilter, setStatusFilter] = useState("");
 
   // Responsive: detect mobile
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
@@ -34,14 +35,33 @@ const Table = ({ columns, data, rowProps }) => {
   };
 
   const filteredData = useMemo(() => {
-    if (!search) return data;
-    const lower = search.toLowerCase();
-    return data.filter((row) =>
-      Object.values(row).some(
-        (val) => typeof val === "string" && val.toLowerCase().includes(lower)
-      )
-    );
-  }, [search, data]);
+    let result = data;
+    if (search) {
+      const lower = search.toLowerCase();
+      result = result.filter((row) =>
+        Object.values(row).some(
+          (val) => typeof val === "string" && val.toLowerCase().includes(lower)
+        )
+      );
+    }
+
+    // Apply subscription status filter if provided
+    if (statusAccessor && statusFilter) {
+      result = result.filter((row) => {
+        const val = row?.[statusAccessor];
+        let status;
+        if (statusAccessor === "student_info") {
+          status =
+            val !== null && typeof val !== "undefined" ? "Active" : "Inactive";
+        } else {
+          status = typeof val === "string" ? val : "";
+        }
+        return status.toLowerCase() === statusFilter.toLowerCase();
+      });
+    }
+
+    return result;
+  }, [search, data, statusAccessor, statusFilter]);
 
   const table = useReactTable({
     columns,
@@ -66,11 +86,9 @@ const Table = ({ columns, data, rowProps }) => {
           const val = cell.getValue();
           if (typeof val === "string" || typeof val === "number") return val;
 
-          // Try to resolve a printable value from the original row using accessorKey
           const accessor = cell.column.columnDef.accessorKey || cell.column.id;
           const orig = row.original?.[accessor];
 
-          // Special-case: student_info -> Active / Inactive
           if (accessor === "student_info") {
             return orig !== null && typeof orig !== "undefined"
               ? "Active"
@@ -145,15 +163,42 @@ const Table = ({ columns, data, rowProps }) => {
   return (
     <div className="tanstack-table-wrapper p-4">
       <div className="d-block d-lg-flex justify-content-between mb-4">
-        <div className="table-search-bar px-2">
-          <input
-            type="text"
-            className="form-control py-2"
-            placeholder="Search for anything"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <SearchIcon />
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          <div className="table-search-bar px-2">
+            <input
+              type="text"
+              className="form-control py-2"
+              placeholder="Search for anything"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <SearchIcon />
+          </div>
+          {statusAccessor && (
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="py-2 px-2"
+              style={{
+                minWidth: "140px",
+                // padding: "8px 12px",
+                borderRadius: "12px",
+                border: "1px solid #eaeaea",
+                fontSize: "1rem",
+              }}
+            >
+              <option value="">All</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          )}
         </div>
         <div className="d-flex gap-2 position-relative mt-4 mt-lg-0">
           <button className="btn dsh-btn px-3" onClick={toggleExportPdf}>
