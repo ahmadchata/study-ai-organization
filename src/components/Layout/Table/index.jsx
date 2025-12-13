@@ -182,22 +182,25 @@ const Table = ({ columns, data, rowProps, statusAccessor }) => {
             <SearchIcon />
           </div>
           {statusAccessor && (
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="py-2 px-2"
-              style={{
-                minWidth: "140px",
-                // padding: "8px 12px",
-                borderRadius: "12px",
-                border: "1px solid #eaeaea",
-                fontSize: "1rem",
-              }}
-            >
-              <option value="">All</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
+            <>
+              <label className="ms-4 text-muted">Status</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="py-2 px-2"
+                style={{
+                  minWidth: "140px",
+                  // padding: "8px 12px",
+                  borderRadius: "12px",
+                  border: "1px solid #eaeaea",
+                  fontSize: "1rem",
+                }}
+              >
+                <option value="">All</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </>
           )}
         </div>
         <div className="d-flex gap-2 position-relative mt-4 mt-lg-0">
