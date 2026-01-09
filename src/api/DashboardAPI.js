@@ -38,9 +38,9 @@ export const DashboardAPI = {
     return response.data.data;
   },
 
-  getStudents: async function (cancel = false) {
+  getStudents: async function (page = 1, cancel = false) {
     const response = await api.request({
-      url: `/method/studyai.apis.organization.get_organization_students`,
+      url: `  /method/studyai.apis.organization.get_organization_students?page=${page}&page_size=${20}&search`,
       method: "GET",
       signal: cancel
         ? cancelApiObject[this.getStudents.name].handleRequestCancellation()
@@ -68,6 +68,18 @@ export const DashboardAPI = {
       method: "GET",
       signal: cancel
         ? cancelApiObject[this.topPerformers.name].handleRequestCancellation()
+            .signal
+        : undefined,
+    });
+    return response.data;
+  },
+
+  getEngagements: async function (cancel = false) {
+    const response = await api.request({
+      url: `/method/studyai.apis.organization.organization_engagement`,
+      method: "GET",
+      signal: cancel
+        ? cancelApiObject[this.getEngagements.name].handleRequestCancellation()
             .signal
         : undefined,
     });

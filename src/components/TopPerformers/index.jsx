@@ -18,7 +18,7 @@ const TopPerformers = () => {
     <table className="performers-table">
       <tbody className="performers-table-body">
         {topPerformers?.data?.students.map((student, index) => (
-          <tr className="performers-table-tr">
+          <tr className="performers-table-tr" key={student?.name}>
             <th scope="row">{index + 1}</th>
             <td>{student?.student_name}</td>
             <td>
