@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Table from "../../Layout/Table";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -18,13 +18,26 @@ const Students = () => {
   const [hoveredRow, setHoveredRow] = useState(null);
   const [actionMenuRow, setActionMenuRow] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
 
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   const { data: students, isFetching } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => DashboardAPI.getStudents(true),
+    queryKey: ["students", currentPage, debouncedSearchTerm],
+    queryFn: () =>
+      DashboardAPI.getStudents(currentPage, debouncedSearchTerm, true),
   });
 
   const mutation = useMutation({
@@ -87,9 +100,11 @@ const Students = () => {
       header: () => (
         <input
           type="checkbox"
-          checked={selected?.length === data?.length && data?.length > 0}
+          checked={
+            selected?.length === (data?.length || 0) && (data?.length || 0) > 0
+          }
           indeterminate={
-            selected?.length > 0 && selected?.length < data?.length
+            selected?.length > 0 && selected?.length < (data?.length || 0)
               ? "indeterminate"
               : undefined
           }
@@ -211,7 +226,7 @@ const Students = () => {
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelected(data.map((row) => row.name));
+      setSelected((data || []).map((row) => row.name));
     } else {
       setSelected([]);
     }
@@ -237,9 +252,9 @@ const Students = () => {
     onMouseLeave: () => setHoveredRow(null),
   });
 
-  if (isFetching) {
-    return <LoadingTracker />;
-  }
+  // if (isFetching) {
+  //   return <LoadingTracker />;
+  // }
 
   return (
     <div className="px-lg-5 px-2">
@@ -258,10 +273,50 @@ const Students = () => {
       </div>
       <Table
         columns={columns}
-        data={data}
+        isFetching={isFetching}
+        data={data || []}
         rowProps={rowProps}
         statusAccessor="subscription_status"
+        onSearch={setSearchTerm}
+        searchValue={searchTerm}
       />
+      <div className="d-flex justify-content-end align-items-center gap-2 mt-4">
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={!students?.has_previous}
+        >
+          &lt;
+        </button>
+        {Array.from(
+          { length: students?.total_pages || 1 },
+          (_, i) => i + 1
+        ).map((page) => (
+          <button
+            key={page}
+            className={`btn ${
+              currentPage === page ? "dsh-btn" : "btn-outline-secondary"
+            }`}
+            onClick={() => setCurrentPage(page)}
+            style={{
+              minWidth: "32px",
+              padding: "4px 8px",
+              backgroundColor: currentPage === page ? "#0c7a50" : "transparent",
+              color: currentPage === page ? "#fff" : "#000",
+              border: "1px solid #ddd",
+            }}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          disabled={!students?.has_next}
+        >
+          &gt;
+        </button>
+      </div>
     </div>
   );
 };

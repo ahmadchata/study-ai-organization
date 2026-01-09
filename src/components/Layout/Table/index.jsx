@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import Papa from "papaparse";
+import CircularProgress from "@mui/material/CircularProgress";
 import {
   useReactTable,
   flexRender,
@@ -12,8 +13,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import LaunchIcon from "@mui/icons-material/Launch";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-const Table = ({ columns, data, rowProps, statusAccessor }) => {
-  const [search, setSearch] = useState("");
+const Table = ({
+  columns,
+  data,
+  rowProps,
+  statusAccessor,
+  onSearch,
+  searchValue,
+  isFetching,
+}) => {
+  const [search, setSearch] = useState(searchValue || "");
   const [exportTable, setExportTable] = useState(false);
   const [expandedRows, setExpandedRows] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
@@ -36,7 +45,8 @@ const Table = ({ columns, data, rowProps, statusAccessor }) => {
 
   const filteredData = useMemo(() => {
     let result = data;
-    if (search) {
+    // Only apply client-side search filtering if no server-side search is provided
+    if (search && !onSearch) {
       const lower = search.toLowerCase();
       result = result.filter((row) =>
         Object.values(row).some(
@@ -61,7 +71,7 @@ const Table = ({ columns, data, rowProps, statusAccessor }) => {
     }
 
     return result;
-  }, [search, data, statusAccessor, statusFilter]);
+  }, [search, data, statusAccessor, statusFilter, onSearch]);
 
   const table = useReactTable({
     columns,
@@ -156,9 +166,9 @@ const Table = ({ columns, data, rowProps, statusAccessor }) => {
     doc.save("table-data.pdf");
   };
 
-  if (data?.length === 0) {
-    return <p>No data</p>;
-  }
+  // if (data?.length === 0) {
+  //   return <p>No data</p>;
+  // }
 
   return (
     <div className="tanstack-table-wrapper p-4">
@@ -177,7 +187,12 @@ const Table = ({ columns, data, rowProps, statusAccessor }) => {
               className="form-control py-2"
               placeholder="Search for anything"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                if (onSearch) {
+                  onSearch(e.target.value);
+                }
+              }}
             />
             <SearchIcon />
           </div>
@@ -230,96 +245,103 @@ const Table = ({ columns, data, rowProps, statusAccessor }) => {
           )}
         </div>
       </div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <table className="tanstack-table">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, idx) =>
-                  isMobile && idx > 1 ? null : (
-                    <th key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </th>
-                  )
-                )}
-                {isMobile && <th></th>}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => {
-              const visibleCells = row.getVisibleCells();
-              return (
-                <React.Fragment key={row.id}>
-                  <tr {...(rowProps ? rowProps(row) : {})}>
-                    {visibleCells.map((cell, idx) =>
-                      isMobile && idx > 1 ? null : (
-                        <td key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </td>
-                      )
-                    )}
-                    {isMobile && (
-                      <td>
-                        <button
-                          className="btn btn-link-dark p-0"
-                          onClick={() => toggleRow(row.id)}
-                          aria-label="Show more"
-                        >
-                          <KeyboardArrowDownIcon
-                            style={{
-                              transform: expandedRows.includes(row.id)
-                                ? "rotate(180deg)"
-                                : "none",
-                              transition: "transform 0.2s",
-                            }}
-                          />
-                        </button>
-                      </td>
-                    )}
-                  </tr>
-                  {isMobile && expandedRows.includes(row.id) && (
-                    <tr key={row.id + "-expanded"}>
-                      <td
-                        colSpan={3}
-                        style={{
-                          background: "#E9EBED",
-                          borderTop: "none",
-                          padding: 0,
-                        }}
-                      >
-                        <div className="p-3">
-                          {visibleCells.slice(2).map((cell) => (
-                            <div
-                              key={cell.id}
-                              className="py-3 d-flex justify-content-between"
-                              style={{ marginBottom: 3 }}
-                            >
-                              {cell.column.columnDef.header}{" "}
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </td>
-                    </tr>
+      {isFetching && (
+        <CircularProgress size={"20px"} style={{ color: "#0c7a50" }} />
+      )}
+      {!data ? (
+        <p>No data</p>
+      ) : (
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <table className="tanstack-table">
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header, idx) =>
+                    isMobile && idx > 1 ? null : (
+                      <th key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </th>
+                    )
                   )}
-                </React.Fragment>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                  {isMobile && <th></th>}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => {
+                const visibleCells = row.getVisibleCells();
+                return (
+                  <React.Fragment key={row.id}>
+                    <tr {...(rowProps ? rowProps(row) : {})}>
+                      {visibleCells.map((cell, idx) =>
+                        isMobile && idx > 1 ? null : (
+                          <td key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </td>
+                        )
+                      )}
+                      {isMobile && (
+                        <td>
+                          <button
+                            className="btn btn-link-dark p-0"
+                            onClick={() => toggleRow(row.id)}
+                            aria-label="Show more"
+                          >
+                            <KeyboardArrowDownIcon
+                              style={{
+                                transform: expandedRows.includes(row.id)
+                                  ? "rotate(180deg)"
+                                  : "none",
+                                transition: "transform 0.2s",
+                              }}
+                            />
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                    {isMobile && expandedRows.includes(row.id) && (
+                      <tr key={row.id + "-expanded"}>
+                        <td
+                          colSpan={3}
+                          style={{
+                            background: "#E9EBED",
+                            borderTop: "none",
+                            padding: 0,
+                          }}
+                        >
+                          <div className="p-3">
+                            {visibleCells.slice(2).map((cell) => (
+                              <div
+                                key={cell.id}
+                                className="py-3 d-flex justify-content-between"
+                                style={{ marginBottom: 3 }}
+                              >
+                                {cell.column.columnDef.header}{" "}
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

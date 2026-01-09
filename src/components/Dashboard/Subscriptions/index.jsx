@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Table from "../../Layout/Table";
 // import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -14,11 +14,24 @@ import { useSnackbar } from "notistack";
 const Subscriptions = () => {
   const [selected, setSelected] = useState([]);
   const [hoveredRow, setHoveredRow] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const { enqueueSnackbar } = useSnackbar();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const { data: subscriptions, isFetching } = useQuery({
-    queryKey: ["subscriptions"],
-    queryFn: () => DashboardAPI.getSubscriptions(true),
+    queryKey: ["subscriptions", currentPage, debouncedSearchTerm],
+    queryFn: () =>
+      DashboardAPI.getSubscriptions(currentPage, debouncedSearchTerm, true),
   });
 
   const data = subscriptions?.subscriptions;
@@ -49,9 +62,11 @@ const Subscriptions = () => {
       header: () => (
         <input
           type="checkbox"
-          checked={selected?.length === data?.length && data?.length > 0}
+          checked={
+            selected?.length === (data?.length || 0) && (data?.length || 0) > 0
+          }
           indeterminate={
-            selected?.length > 0 && selected?.length < data?.length
+            selected?.length > 0 && selected?.length < (data?.length || 0)
               ? "indeterminate"
               : undefined
           }
@@ -146,9 +161,9 @@ const Subscriptions = () => {
     onMouseLeave: () => setHoveredRow(null),
   });
 
-  if (isFetching) {
-    return <LoadingTracker />;
-  }
+  // if (isFetching) {
+  //   return <LoadingTracker />;
+  // }
 
   return (
     <div className="px-lg-5 px-2">
@@ -175,9 +190,49 @@ const Subscriptions = () => {
       <Table
         columns={columns}
         data={data}
+        isFetching={isFetching}
         rowProps={rowProps}
         statusAccessor="student_info"
+        onSearch={setSearchTerm}
+        searchValue={searchTerm}
       />
+      <div className="d-flex justify-content-end align-items-center gap-2 mt-4">
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={!subscriptions?.has_previous}
+        >
+          &lt;
+        </button>
+        {Array.from(
+          { length: subscriptions?.total_pages || 1 },
+          (_, i) => i + 1
+        ).map((page) => (
+          <button
+            key={page}
+            className={`btn ${
+              currentPage === page ? "dsh-btn" : "btn-outline-secondary"
+            }`}
+            onClick={() => setCurrentPage(page)}
+            style={{
+              minWidth: "32px",
+              padding: "4px 8px",
+              backgroundColor: currentPage === page ? "#0c7a50" : "transparent",
+              color: currentPage === page ? "#fff" : "#000",
+              border: "1px solid #ddd",
+            }}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          disabled={!subscriptions?.has_next}
+        >
+          &gt;
+        </button>
+      </div>
     </div>
   );
 };

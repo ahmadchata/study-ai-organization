@@ -2,9 +2,9 @@ import { api } from "./configs/axiosConfig";
 import { defineCancelApiObject } from "./configs/axiosUtils";
 
 export const DashboardAPI = {
-  getSubscriptions: async function (cancel = false) {
+  getSubscriptions: async function (page = 1, search, cancel = false) {
     const response = await api.request({
-      url: `/method/studyai.apis.organization.get_subscriptions`,
+      url: `/method/studyai.apis.organization.get_subscriptions?page=${page}&page_size=20&search=${search}`,
       method: "GET",
       signal: cancel
         ? cancelApiObject[
@@ -38,9 +38,9 @@ export const DashboardAPI = {
     return response.data.data;
   },
 
-  getStudents: async function (page = 1, cancel = false) {
+  getStudents: async function (page = 1, search, cancel = false) {
     const response = await api.request({
-      url: `  /method/studyai.apis.organization.get_organization_students?page=${page}&page_size=${20}&search`,
+      url: `/method/studyai.apis.organization.get_organization_students?page=${page}&page_size=${20}&search=${search}`,
       method: "GET",
       signal: cancel
         ? cancelApiObject[this.getStudents.name].handleRequestCancellation()
