@@ -145,7 +145,9 @@ const PurchaseCode = () => {
                       ({subscription?.duration})
                     </span>
                   </h5>
-                  <p className="m-0 mt-2 p-0 price">₦ {subscription?.price}</p>
+                  <p className="m-0 mt-2 p-0 price">
+                    ₦ {subscription?.description}
+                  </p>
                 </div>
               </div>
             </div>
@@ -161,7 +163,24 @@ const PurchaseCode = () => {
                 </div>
                 <div className="d-flex justify-content-between mt-3">
                   <p className="grey m-0 p-0">Amount</p>
-                  <p className="m-0 p-0">₦ {selected}</p>
+                  <p className="m-0 p-0">
+                    ₦{" "}
+                    {
+                      subscriptions?.find((sub) => sub.price === selected)
+                        ?.description
+                    }
+                  </p>
+                </div>
+                <div className="d-flex justify-content-between mt-3">
+                  <p className="grey m-0 p-0">VAT (7.5%)</p>
+                  <p className="m-0 p-0">
+                    ₦{" "}
+                    {Math.round(
+                      (7.5 / 100) *
+                        subscriptions?.find((sub) => sub.price === selected)
+                          ?.description
+                    )}
+                  </p>
                 </div>
                 <div className="d-flex justify-content-between mt-3">
                   <p className="grey m-0 p-0">Duration</p>
