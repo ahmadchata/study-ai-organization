@@ -60,7 +60,14 @@ const ViewRoom = () => {
   const handleScroll = useCallback(
     (e) => {
       const { scrollTop, scrollHeight, clientHeight } = e.target;
-      setShowNavDiv(scrollTop > 160);
+
+      // Show nav if scrolled past 160px, hide only when scrolled back to top
+      if (scrollTop > 160) {
+        setShowNavDiv(true);
+      } else if (scrollTop < 50) {
+        setShowNavDiv(false);
+      }
+
       if (
         scrollHeight - scrollTop <= clientHeight + 100 &&
         hasNextPage &&
@@ -143,22 +150,7 @@ const ViewRoom = () => {
 
   const { title, description, member_count, post_count } = room.community;
   return (
-    <Layout id={id}>
-      {showNavDiv && (
-        <div className="nav-div d-flex align-items-center position-sticky top-0 p-3 justify-content-between">
-          <h5 className="m-0">{title}</h5>
-          <div className="search-container">
-            <SearchIcon className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search room"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-      )}
+    <Layout id={id} title={title} showNavDiv={showNavDiv}>
       <div className="post-feed" onScroll={handleScroll}>
         <div className="bg-white">
           <div
@@ -185,31 +177,33 @@ const ViewRoom = () => {
             </div>
           </div>
 
-          <div className="d-flex justify-content-between align-items-center">
-            <div style={{ width: "133px", height: "40px" }}>
-              <Select
-                options={options}
-                value={filter}
-                onChange={setFilter}
-                placeholder="Select Options"
-                className="py-2 bg-white w-100"
-              />
-            </div>
+          {!showNavDiv && (
+            <div className="d-block d-lg-flex justify-content-between align-items-center">
+              <div style={{ width: "133px", height: "40px" }}>
+                <Select
+                  options={options}
+                  value={filter}
+                  onChange={setFilter}
+                  placeholder="Select Options"
+                  className="py-2 bg-white w-100"
+                />
+              </div>
 
-            <div
-              className="search-container"
-              style={{ backgroundColor: "#F4F4F4" }}
-            >
-              <SearchIcon className="search-icon" />
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search room"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              <div
+                className={`search-container mt-4 mt-lg-0`}
+                style={{ backgroundColor: "#F4F4F4" }}
+              >
+                <SearchIcon className="search-icon" />
+                <input
+                  type="text"
+                  className="search-input-1"
+                  placeholder="Search room"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="row gap-4 m-0 p-0 mt-4">

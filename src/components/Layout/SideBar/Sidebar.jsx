@@ -14,6 +14,7 @@ const Sidebar = forwardRef((props, ref) => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const { logout } = useAuth();
   const { onClose } = props;
+  const { orgName } = props;
 
   const handleLinkClick = () => {
     if (onClose) {
@@ -34,8 +35,9 @@ const Sidebar = forwardRef((props, ref) => {
       style={{ minWidth: "272px" }}
     >
       <div>
+        <h6 className="mb-4">Hi, {orgName}</h6>
         {/* Tab Switcher */}
-        <div className="d-flex gap-5 mb-4">
+        <div className="d-flex d-lg-none gap-5 mb-4">
           <button
             className={`tab-button ${activeTab === "dashboard" ? "tab-active" : ""}`}
             onClick={() => setActiveTab("dashboard")}
@@ -152,7 +154,7 @@ const Sidebar = forwardRef((props, ref) => {
           </Link>
           <li
             onClick={handleLogout}
-            className="text-danger mt-5 mt-lg-0"
+            className="text-dark mt-5 mt-lg-0"
             style={{ cursor: "pointer" }}
           >
             {loading ? "Logging out..." : "Logout"}

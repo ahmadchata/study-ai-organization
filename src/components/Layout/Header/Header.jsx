@@ -5,9 +5,9 @@ import Sidebar from "../SideBar/Sidebar";
 import { CSSTransition } from "react-transition-group";
 import { Link } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
-import GroupIcon from "@mui/icons-material/Group";
-import SpeakerGroupIcon from "@mui/icons-material/SpeakerGroup";
-import WorkspacesIcon from "@mui/icons-material/Workspaces";
+import GroupIcon from "@mui/icons-material/GroupOutlined";
+import SpeakerGroupIcon from "@mui/icons-material/SpeakerGroupOutlined";
+import WorkspacesIcon from "@mui/icons-material/WorkspacesOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MenuLogo from "../../../assets/menu-white.svg";
 import { useAuth } from "../../../Context/AuthContext";
@@ -64,51 +64,45 @@ const Header = () => {
           <div className="d-none d-lg-flex justify-content-between align-items-center">
             <div className="header-tabs">
               <Link
-                className={`text-decoration-none text-white ${
+                className={`text-decoration-none ${
                   location.pathname === "/dashboard"
                     ? "header-active"
                     : "header"
                 }`}
                 to={"/dashboard"}
               >
-                <WorkspacesIcon
-                  style={{ color: "#fff", marginRight: "10px" }}
-                />
+                <WorkspacesIcon style={{ marginRight: "10px" }} />
                 Overview
               </Link>
 
               <Link
-                className={`text-decoration-none text-white mx-3 ${
+                className={`text-decoration-none mx-3 ${
                   location.pathname === "/dashboard/students"
                     ? "header-active"
                     : "header"
                 }`}
                 to={"/dashboard/students"}
               >
-                <GroupIcon style={{ color: "#fff", marginRight: "10px" }} />
+                <GroupIcon style={{ marginRight: "10px" }} />
                 Students
               </Link>
 
               <Link
-                className={`text-decoration-none text-white me-3 ${
+                className={`text-decoration-none me-3 ${
                   location.pathname.includes("/dashboard/subscriptions")
                     ? "header-active"
                     : "header"
                 }`}
                 to={"/dashboard/subscriptions"}
               >
-                <SpeakerGroupIcon
-                  style={{ color: "#fff", marginRight: "10px" }}
-                />
+                <SpeakerGroupIcon style={{ marginRight: "10px" }} />
                 Subscriptions
               </Link>
 
               <div className="d-flex align-items-center mb-lg-0 border-start">
                 <button className="btn header ms-3" onClick={toggleSidebar}>
-                  <PersonIcon style={{ color: "#fff" }} />
-                  <KeyboardArrowDownIcon
-                    style={{ color: "#fff", marginLeft: "10px" }}
-                  />
+                  <PersonIcon />
+                  <KeyboardArrowDownIcon style={{ marginLeft: "10px" }} />
                 </button>
               </div>
             </div>

@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import LoadingTracker from "../components/Common/Loading";
 import ProtectedRoute from "./protectedRoutes";
+import NotFound from "../components/404/NotFound";
 
 const Login = lazy(() => import("../views"));
 const Overview = lazy(() => import("../views/dashboard"));
@@ -93,6 +94,9 @@ const AllRoutes = () => {
             </ProtectedRoute>
           }
         />
+
+        {/* Catch-all route for 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   );

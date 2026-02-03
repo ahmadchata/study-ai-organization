@@ -13,6 +13,7 @@
 .header {
   padding: 9px 18px;
   border-radius: 20px;
+  color: #fff;
   background-color: #448565;
 }
 
@@ -30,14 +31,16 @@
 }
 
 .header:hover {
-  border: 1px solid #eaeaea;
+  background-color: #fff;
+  color: #0c7a50;
 }
 
 .header-tabs .header-active {
   padding: 9px 18px;
   border-radius: 20px;
-  background-color: #448565;
-  border: 1px solid #eaeaea;
+  background-color: #fff;
+  color: #0c7a50;
+  /* border: 1px solid #eaeaea; */
 }
 
 .sidebar-enter {

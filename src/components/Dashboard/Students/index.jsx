@@ -259,8 +259,8 @@ const Students = () => {
 
   return (
     <div className="px-lg-5 px-2">
-      <div className="my-5 d-flex justify-content-between">
-        <button className="btn dsh-btn d-inline-flex align-items-center">
+      <div className="my-5 d-block d-lg-flex justify-content-between align-items-center">
+        <button className="btn dsh-btn d-inline-flex align-items-center me-4">
           <span className="icon-btn d-inline-flex align-items-center me-2">
             <PeopleOutlineIcon style={{ fontSize: "18px" }} />
           </span>
@@ -271,7 +271,7 @@ const Students = () => {
           to="/dashboard/discussion-room"
           className="text-decoration-none text-dark"
         >
-          <button className="ms-4 btn dsh-btn green-text d-inline-flex align-items-center py-3 px-3">
+          <button className="ms-0 ms-lg-4 mt-4 mt-lg-0 btn dsh-btn green-text d-inline-flex align-items-center py-3 px-3">
             <ForumIcon style={{ marginRight: "5px" }} />
             Discussion room
           </button>
