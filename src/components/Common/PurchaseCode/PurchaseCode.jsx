@@ -91,7 +91,7 @@ const PurchaseCode = () => {
     queryFn: () => SubscriptionAPI.getSubscriptionTypes(true),
     select: (data) =>
       data?.filter(
-        (subscription) => subscription?.type?.toLowerCase() !== "trial"
+        (subscription) => subscription?.type?.toLowerCase() !== "trial",
       ),
   });
 
@@ -178,7 +178,7 @@ const PurchaseCode = () => {
                     {Math.round(
                       (7.5 / 100) *
                         subscriptions?.find((sub) => sub.price === selected)
-                          ?.description
+                          ?.description,
                     )}
                   </p>
                 </div>

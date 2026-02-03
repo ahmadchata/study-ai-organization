@@ -112,6 +112,20 @@ body {
   border-radius: 18px;
 }
 
+.cmty-btn {
+  padding: 16px;
+  color: #fff;
+  border-radius: 12px;
+  background-color: #0c7a50;
+}
+
+.cmty-btn:hover {
+  padding: 16px;
+  color: #fff;
+  border-radius: 12px;
+  background-color: #0c7a50;
+}
+
 .pointer {
   cursor: pointer;
 }

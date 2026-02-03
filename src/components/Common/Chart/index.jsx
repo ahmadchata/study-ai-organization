@@ -55,8 +55,6 @@ const EngagementChart = () => {
     return <LoadingTracker />;
   }
 
-  console.log(engagements?.data?.engagement_data);
-
   return (
     <ResponsiveContainer width={700} height="90%">
       <AreaChart

@@ -9,6 +9,13 @@ const Students = lazy(() => import("../views/dashboard/students"));
 const Subscriptions = lazy(() => import("../views/dashboard/subscriptions"));
 const PurchaseCode = lazy(() => import("../views/dashboard/purchase-code"));
 const Account = lazy(() => import("../views/dashboard/account"));
+const DiscussionRoom = lazy(() => import("../views/dashboard/discussionRoom"));
+const ViewPost = lazy(
+  () => import("../views/dashboard/discussionRoom/viewPost"),
+);
+const Notifications = lazy(
+  () => import("../views/dashboard/discussionRoom/notifications"),
+);
 
 const AllRoutes = () => {
   return (
@@ -29,6 +36,33 @@ const AllRoutes = () => {
           element={
             <ProtectedRoute>
               <Students />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/discussion-room"
+          element={
+            <ProtectedRoute>
+              <DiscussionRoom />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/discussion-room/post/:id"
+          element={
+            <ProtectedRoute>
+              <ViewPost />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/discussion-room/notifications"
+          element={
+            <ProtectedRoute>
+              <Notifications />
             </ProtectedRoute>
           }
         />

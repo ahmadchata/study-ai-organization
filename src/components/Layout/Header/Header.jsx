@@ -4,24 +4,36 @@ import PersonIcon from "@mui/icons-material/Person";
 import Sidebar from "../SideBar/Sidebar";
 import { CSSTransition } from "react-transition-group";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import GroupIcon from "@mui/icons-material/Group";
 import SpeakerGroupIcon from "@mui/icons-material/SpeakerGroup";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MenuLogo from "../../../assets/menu-white.svg";
 import { useAuth } from "../../../Context/AuthContext";
+import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import CreatePostModal from "../../Dashboard/DiscussionRoom/CreatePostModal";
 
 const Header = () => {
   const [sidebar, setSidebar] = useState(false);
   const sideBarRef = useRef(null);
   const location = useLocation();
+  const [showModal, setShowModal] = useState(false);
+
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const id = user?.organization_profile?.admin_communities[0]?.name;
 
   const currentPage = {
     "/dashboard": "Overview",
     "/dashboard/students": "Students",
     "/dashboard/subscriptions": "Subscriptions",
+  };
+
+  const goBack = () => {
+    navigate("/dashboard/students");
   };
 
   const toggleSidebar = () => {
@@ -30,7 +42,7 @@ const Header = () => {
 
   return (
     <header
-      className="header-bg m-0 p-0 d-flex align-items-center px-lg-5 px-2 py-4 sticky-top"
+      className="header-bg m-0 p-0 d-flex align-items-center px-lg-5 px-2 py-4"
       style={{ minHeight: "65px" }}
     >
       <div className="position-relative w-100">
@@ -47,14 +59,6 @@ const Header = () => {
               <button className="btn d-lg-none" onClick={toggleSidebar}>
                 <img src={MenuLogo} alt="Menu" className="img-fluid" />
               </button>
-            </div>
-            <div className="text-white mt-4">
-              <label className="header-label">
-                {user?.organization_profile?.organization_name}
-              </label>
-              <label className="ms-3 fw-regular">
-                {currentPage[location.pathname] ?? ""}
-              </label>
             </div>
           </div>
           <div className="d-none d-lg-flex justify-content-between align-items-center">
@@ -110,6 +114,39 @@ const Header = () => {
             </div>
           </div>
         </div>
+        {location.pathname.includes("/dashboard/discussion-room") ? (
+          <div className="d-flex mt-4 align-items-center justify-content-between">
+            <div className="d-flex align-items-center">
+              <button
+                className="d-flex header-bk-btn align-items-center btn me-2"
+                onClick={goBack}
+              >
+                <ArrowBackIosIcon style={{ fontSize: "14px" }} /> Back
+              </button>
+              <label className="text-white fs-5">Discussion room</label>
+            </div>
+            <button
+              className="d-flex d-lg-none p-0 text-white align-items-center btn me-2"
+              onClick={() => setShowModal(true)}
+            >
+              <AddCircleOutlinedIcon style={{ fontSize: "40px" }} />
+            </button>
+          </div>
+        ) : (
+          <div className="text-white mt-4">
+            <label className="header-label">
+              {user?.organization_profile?.organization_name}
+            </label>
+            <label className="ms-3 fw-regular">
+              {currentPage[location.pathname] ?? ""}
+            </label>
+          </div>
+        )}
+        <CreatePostModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          communityId={id}
+        />
         <CSSTransition
           in={sidebar}
           timeout={300}

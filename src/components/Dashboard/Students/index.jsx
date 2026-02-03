@@ -6,10 +6,11 @@ import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { DashboardAPI } from "../../../api/DashboardAPI";
 import { SubscriptionAPI } from "../../../api/SubscriptionAPI";
-import LoadingTracker from "../../Common/Loading";
+import ForumIcon from "@mui/icons-material/ForumOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import { useSnackbar } from "notistack";
+import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import "./styles.css";
 
@@ -204,7 +205,7 @@ const Students = () => {
                   disabled={loading}
                   onClick={() =>
                     revokeAccess(
-                      row.original.active_subscription?.subscription_code
+                      row.original.active_subscription?.subscription_code,
                     )
                   }
                 >
@@ -234,7 +235,7 @@ const Students = () => {
 
   const handleSelectRow = (name) => {
     setSelected((prev) =>
-      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
+      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name],
     );
   };
 
@@ -243,7 +244,7 @@ const Students = () => {
     handleSelectAll,
     handleSelectRow,
     hoveredRow,
-    setHoveredRow
+    setHoveredRow,
   );
 
   // Custom rowProps to handle hover
@@ -258,7 +259,7 @@ const Students = () => {
 
   return (
     <div className="px-lg-5 px-2">
-      <div className="my-5 d-flex justify-content-between justify-content-lg-start">
+      <div className="my-5 d-flex justify-content-between">
         <button className="btn dsh-btn d-inline-flex align-items-center">
           <span className="icon-btn d-inline-flex align-items-center me-2">
             <PeopleOutlineIcon style={{ fontSize: "18px" }} />
@@ -266,10 +267,15 @@ const Students = () => {
           Total Students:{" "}
           <span className="ms-2 green-text">{data?.length}</span>
         </button>
-        {/* <button className="ms-4 btn dsh-btn green-text d-inline-flex align-items-center py-3 px-3">
-          <AddIcon />
-          Add students
-        </button> */}
+        <Link
+          to="/dashboard/discussion-room"
+          className="text-decoration-none text-dark"
+        >
+          <button className="ms-4 btn dsh-btn green-text d-inline-flex align-items-center py-3 px-3">
+            <ForumIcon style={{ marginRight: "5px" }} />
+            Discussion room
+          </button>
+        </Link>
       </div>
       <Table
         columns={columns}
@@ -290,7 +296,7 @@ const Students = () => {
         </button>
         {Array.from(
           { length: students?.total_pages || 1 },
-          (_, i) => i + 1
+          (_, i) => i + 1,
         ).map((page) => (
           <button
             key={page}

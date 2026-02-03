@@ -4,6 +4,43 @@
   z-index: 3;
 }
 
+.side-bar-active {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  background-color: #f4f4f4;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+  color: #333;
+  font-weight: 400;
+}
+
+.tab-button {
+  /* flex: 1; */
+  border: none;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  color: #929292;
+}
+
+.tab-button:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.tab-button.tab-active {
+  color: #000;
+}
+
 @media screen and (max-width: 768px) {
   .side-bar {
     width: 100%;

@@ -5,12 +5,22 @@
 
 .header-bg {
   background-color: #0c7a50;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .header {
   padding: 9px 18px;
   border-radius: 20px;
   background-color: #448565;
+}
+
+.header-bk-btn {
+  background-color: #448565;
+  color: #fff;
+  border-radius: 24px;
+  padding: 11px 18px;
 }
 
 .header-label {
@@ -40,7 +50,9 @@
   /* position: fixed; */
   opacity: 1;
   transform: translateX(0);
-  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+  transition:
+    opacity 300ms ease-in-out,
+    transform 300ms ease-in-out;
 }
 
 .sidebar-exit {
@@ -53,11 +65,15 @@
   /* position: fixed; */
   opacity: 0;
   transform: translateX(100%);
-  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+  transition:
+    opacity 300ms ease-in-out,
+    transform 300ms ease-in-out;
 }
 
 .mobile-menu-btn {
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .mobile-menu-btn:hover {
