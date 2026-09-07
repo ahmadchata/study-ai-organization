@@ -1,47 +1,90 @@
-.logo {
-  margin-bottom: 3rem;
+.login-page {
+  display: flex;
+  min-height: 100dvh;
+  background-color: #fff;
 }
 
-.login-container {
-  display: flex;
-  background-color: #fff;
+.login-visual {
+  flex: 1;
+  max-width: 45%;
+  background-color: #e7f8cf;
   flex-direction: column;
+  align-items: flex-start;
+  padding: 40px;
+  position: relative;
+}
+
+.login-visual-logo {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+
+.login-visual-illustration {
+  flex: 1;
+  display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100dvh;
+  padding: 20px 40px 60px;
 }
 
-.login-form {
-  width: 383px;
-  margin: auto;
-  padding: 20px;
+.login-visual-illustration img {
+  max-width: 480px;
+  width: 100%;
 }
 
-.selection-card {
+.login-panel {
+  flex: 1;
+  padding: 40px 24px;
+}
+
+.login-panel-inner {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-toggle {
+  display: inline-flex;
   border: 1px solid #eaeaea;
+  border-radius: 24px;
+  padding: 4px;
+  margin-bottom: 32px;
+}
+
+.login-toggle-btn {
+  border: none;
+  background: none;
+  padding: 10px 22px;
   border-radius: 20px;
-  transition: all 300ms ease-out;
+  color: #333;
+  font-size: 14px;
 }
 
-.selection-card:hover {
-  border: 2px solid #0c7a50;
+.login-toggle-btn-active {
+  background-color: #000;
+  color: #fff;
 }
 
-.selection-card input,
-.subject-item input {
-  accent-color: #0c7a50;
+.login-title {
+  font-weight: 600;
+  margin-bottom: 32px;
 }
 
-.selection-card.selected {
-  accent-color: #0c7a50;
+.login-label {
+  display: block;
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 10px;
 }
 
-.selected {
-  border: 2px solid #0c7a50;
-  background-color: #edf8f6;
+.login-input {
+  width: 100%;
+  border: 1px solid #eaeaea;
+  border-radius: 24px;
+  padding: 16px 20px;
 }
 
-.login > input {
+.login-input-bare {
   border: none;
   outline: none;
   box-shadow: none;
@@ -50,15 +93,36 @@
   appearance: none;
 }
 
-.login > input:focus {
-  outline: none;
+.login-input input {
   border: none;
-  box-shadow: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+  outline: none;
 }
 
-.form-field {
+.login-input:focus-within {
+  border-color: #0c7a50;
+}
+
+.login-submit {
+  width: 100%;
   padding: 16px;
+  border-radius: 24px;
+  background-color: #0c7a50;
+  color: #fff;
+  font-weight: 500;
+}
+
+.login-submit:hover {
+  background-color: #095f3f;
+  color: #fff;
+}
+
+.login-submit:disabled {
+  background-color: #929292;
+  color: #fff;
+}
+
+@media (max-width: 991.98px) {
+  .login-panel {
+    padding: 40px 20px;
+  }
 }

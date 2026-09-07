@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import Papa from "papaparse";
@@ -21,6 +21,8 @@ const Table = ({
   onSearch,
   searchValue,
   isFetching,
+  actions,
+  hideExport,
 }) => {
   const [search, setSearch] = useState(searchValue || "");
   const [exportTable, setExportTable] = useState(false);
@@ -28,7 +30,16 @@ const Table = ({
   const [statusFilter, setStatusFilter] = useState("");
 
   // Responsive: detect mobile
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 768,
+  );
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Helper to toggle row expansion
   const toggleRow = (rowId) => {
@@ -219,9 +230,12 @@ const Table = ({
           )}
         </div>
         <div className="d-flex gap-2 position-relative mt-4 mt-lg-0">
-          <button className="btn dsh-btn px-3" onClick={toggleExportPdf}>
-            Export PDF/CSV <LaunchIcon fontSize="small" />
-          </button>
+          {actions}
+          {!hideExport && (
+            <button className="btn dsh-btn px-3" onClick={toggleExportPdf}>
+              Export PDF/CSV <LaunchIcon fontSize="small" />
+            </button>
+          )}
           {exportTable && (
             <div
               className={`context-menu bg-white position-absolute rounded-4 p-4 border border-2`}

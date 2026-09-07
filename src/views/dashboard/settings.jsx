@@ -1,7 +1,7 @@
 import Profile from "../../components/Dashboard/Account";
 
-const Account = () => {
+const SettingsPage = () => {
   return <Profile />;
 };
 
-export default Account;
+export default SettingsPage;

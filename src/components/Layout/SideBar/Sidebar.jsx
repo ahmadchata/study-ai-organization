@@ -1,169 +1,81 @@
 import "./Sidebar.css";
-import { Link } from "react-router-dom";
-import { forwardRef, useState } from "react";
-import { useAuth } from "../../../Context/AuthContext";
-import PersonIcon from "@mui/icons-material/Person";
-import GroupIcon from "@mui/icons-material/Group";
-import SpeakerGroupIcon from "@mui/icons-material/SpeakerGroup";
-import WorkspacesIcon from "@mui/icons-material/Workspaces";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import { Link, useLocation } from "react-router-dom";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
+import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
+import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
+import CloseIcon from "@mui/icons-material/Close";
 
-const Sidebar = forwardRef((props, ref) => {
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const { logout } = useAuth();
-  const { onClose } = props;
-  const { orgName } = props;
+const NAV_ITEMS = [
+  {
+    label: "Dashboard",
+    to: "/dashboard",
+    icon: DashboardOutlinedIcon,
+    match: (path) => path === "/dashboard" || path === "/dashboard/top-students",
+  },
+  {
+    label: "Students",
+    to: "/dashboard/students",
+    icon: GroupOutlinedIcon,
+    match: (path) => path.startsWith("/dashboard/students"),
+  },
+  {
+    label: "Exams",
+    to: "/dashboard/exams",
+    icon: MenuBookOutlinedIcon,
+    match: (path) => path.startsWith("/dashboard/exams"),
+  },
+  {
+    label: "Community",
+    to: "/dashboard/discussion-room",
+    icon: ChatBubbleOutlineOutlinedIcon,
+    match: (path) => path.startsWith("/dashboard/discussion-room"),
+  },
+  {
+    label: "Subscription",
+    to: "/dashboard/subscriptions",
+    icon: CreditCardOutlinedIcon,
+    match: (path) => path.startsWith("/dashboard/subscriptions"),
+  },
+];
 
-  const handleLinkClick = () => {
-    if (onClose) {
-      onClose();
-    }
-  };
-
-  const handleLogout = async () => {
-    setLoading(true);
-    await logout();
-    setLoading(false);
-  };
+const Sidebar = ({ open, onClose }) => {
+  const location = useLocation();
 
   return (
-    <div
-      ref={ref}
-      className={`side-bar bg-white position-absolute rounded-4 p-4 border border-2`}
-      style={{ minWidth: "272px" }}
-    >
-      <div>
-        <h6 className="mb-4">Hi, {orgName}</h6>
-        {/* Tab Switcher */}
-        <div className="d-flex d-lg-none gap-5 mb-4">
-          <button
-            className={`tab-button ${activeTab === "dashboard" ? "tab-active" : ""}`}
-            onClick={() => setActiveTab("dashboard")}
-          >
-            Dashboard
-          </button>
-          <button
-            className={`tab-button ${activeTab === "discussion" ? "tab-active" : ""}`}
-            onClick={() => setActiveTab("discussion")}
-          >
-            Discussion Room
+    <>
+      {open && <div className="sidebar-backdrop d-lg-none" onClick={onClose} />}
+      <aside className={`app-sidebar ${open ? "app-sidebar-open" : ""}`}>
+        <div className="d-flex align-items-center justify-content-between mb-4 px-1">
+          <Link to="/dashboard" className="d-inline-flex">
+            <img src="/assets/logo-green.png" alt="StudyAI" className="sidebar-logo" />
+          </Link>
+          <button className="btn d-lg-none p-1" onClick={onClose} aria-label="Close menu">
+            <CloseIcon />
           </button>
         </div>
 
-        {/* Dashboard Links */}
-        {activeTab === "dashboard" && (
-          <div className="d-block d-lg-none mt-1 justify-content-between align-items-center">
-            <div className="d-fle justify-content-between">
+        <nav className="d-flex flex-column gap-1">
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const active = item.match(location.pathname);
+            return (
               <Link
-                className={`text-decoration-none d-flex ${
-                  location.pathname === "/dashboard"
-                    ? "side-bar-active"
-                    : "text-dark"
-                }`}
-                to={"/dashboard"}
-                onClick={handleLinkClick}
+                key={item.to}
+                to={item.to}
+                onClick={onClose}
+                className={`sidebar-nav-item text-decoration-none ${active ? "sidebar-nav-item-active" : ""}`}
               >
-                <WorkspacesIcon
-                  style={{ color: "#000", marginRight: "10px" }}
-                />
-                Overview
+                <Icon fontSize="small" />
+                <span>{item.label}</span>
               </Link>
-
-              <Link
-                className={`text-decoration-none d-flex my-3 ${
-                  location.pathname === "/dashboard/students"
-                    ? "side-bar-active"
-                    : "text-dark"
-                }`}
-                to={"/dashboard/students"}
-                onClick={handleLinkClick}
-              >
-                <GroupIcon style={{ color: "#000", marginRight: "10px" }} />
-                Students
-              </Link>
-
-              <Link
-                className={`text-decoration-none d-flex ${
-                  location.pathname.includes("/dashboard/subscriptions")
-                    ? "side-bar-active"
-                    : "text-dark"
-                }`}
-                to={"/dashboard/subscriptions"}
-                onClick={handleLinkClick}
-              >
-                <SpeakerGroupIcon
-                  style={{ color: "#000", marginRight: "10px" }}
-                />
-                Subscriptions
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {/* Discussion Room Links */}
-        {activeTab === "discussion" && (
-          <div className="d-block d-lg-none mt-1 justify-content-between align-items-center">
-            <div className="d-fle justify-content-between">
-              <Link
-                className={`text-decoration-none d-flex ${
-                  location.pathname === "/dashboard/discussion-room"
-                    ? "side-bar-active"
-                    : "text-dark"
-                }`}
-                to={"/dashboard/discussion-room"}
-                onClick={handleLinkClick}
-              >
-                <HomeOutlinedIcon
-                  style={{ color: "#000", marginRight: "10px" }}
-                />
-                Homepage
-              </Link>
-
-              <Link
-                className={`text-decoration-none d-flex my-3 ${
-                  location.pathname ===
-                  "/dashboard/discussion-room/notifications"
-                    ? "side-bar-active"
-                    : "text-dark"
-                }`}
-                to={"/dashboard/discussion-room/notifications"}
-                onClick={handleLinkClick}
-              >
-                <NotificationsOutlinedIcon
-                  style={{ color: "#000", marginRight: "10px" }}
-                />
-                Notifications
-              </Link>
-            </div>
-          </div>
-        )}
-        <ul className="list-unstyled mt-3 mt-lg-4 d-block d-lg-flex justify-content-between">
-          <Link
-            to="/dashboard/account"
-            className={`text-decoration-none d-flex ${
-              location.pathname.includes("/dashboard/account")
-                ? "side-bar-active"
-                : "text-dark"
-            }`}
-            onClick={handleLinkClick}
-          >
-            <PersonIcon style={{ color: "#000", marginRight: "8px" }} />
-            <li>Account</li>
-          </Link>
-          <li
-            onClick={handleLogout}
-            className="text-dark mt-5 mt-lg-0"
-            style={{ cursor: "pointer" }}
-          >
-            {loading ? "Logging out..." : "Logout"}
-          </li>
-        </ul>
-      </div>
-    </div>
+            );
+          })}
+        </nav>
+      </aside>
+    </>
   );
-});
-Sidebar.displayName = "Sidebar";
+};
 
 export default Sidebar;

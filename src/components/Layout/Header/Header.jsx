@@ -1,161 +1,172 @@
 import "./Header.css";
-import { useState, useRef } from "react";
-import PersonIcon from "@mui/icons-material/Person";
-import Sidebar from "../SideBar/Sidebar";
-import { CSSTransition } from "react-transition-group";
-import { Link } from "react-router-dom";
-import { useLocation, useNavigate } from "react-router-dom";
-import GroupIcon from "@mui/icons-material/GroupOutlined";
-import SpeakerGroupIcon from "@mui/icons-material/SpeakerGroupOutlined";
-import WorkspacesIcon from "@mui/icons-material/WorkspacesOutlined";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import MenuLogo from "../../../assets/menu-white.svg";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import MenuIcon from "@mui/icons-material/Menu";
 import { useAuth } from "../../../Context/AuthContext";
-import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import CreatePostModal from "../../Dashboard/DiscussionRoom/CreatePostModal";
 
-const Header = () => {
-  const [sidebar, setSidebar] = useState(false);
-  const sideBarRef = useRef(null);
+const getPageMeta = (pathname) => {
+  if (pathname.startsWith("/dashboard/students/add")) {
+    return {
+      crumbs: [{ label: "Students", to: "/dashboard/students" }],
+      current: "Add students",
+      backTo: "/dashboard/students",
+    };
+  }
+  if (pathname === "/dashboard/top-students") {
+    return {
+      crumbs: [{ label: "Dashboard", to: "/dashboard" }],
+      current: "Top students",
+      backTo: "/dashboard",
+    };
+  }
+  if (pathname === "/dashboard/students") {
+    return { title: "Students" };
+  }
+  if (pathname.startsWith("/dashboard/exams/create")) {
+    return {
+      crumbs: [{ label: "Exam", to: "/dashboard/exams" }],
+      current: "Create exam",
+      backTo: "/dashboard/exams",
+    };
+  }
+  if (pathname === "/dashboard/exams") {
+    return { title: "Exams" };
+  }
+  if (pathname.startsWith("/dashboard/discussion-room/create-post")) {
+    return {
+      crumbs: [{ label: "Community", to: "/dashboard/discussion-room" }],
+      current: "post",
+      backTo: "/dashboard/discussion-room",
+    };
+  }
+  if (pathname.startsWith("/dashboard/discussion-room/post/")) {
+    return {
+      crumbs: [{ label: "Community", to: "/dashboard/discussion-room" }],
+      current: "Post",
+      backTo: "/dashboard/discussion-room",
+    };
+  }
+  if (pathname === "/dashboard/discussion-room/notifications") {
+    return {
+      crumbs: [{ label: "Community", to: "/dashboard/discussion-room" }],
+      current: "Notifications",
+      backTo: "/dashboard/discussion-room",
+    };
+  }
+  if (pathname === "/dashboard/discussion-room") {
+    return { title: "Community" };
+  }
+  if (pathname.startsWith("/dashboard/subscriptions/purchase-code")) {
+    return {
+      crumbs: [{ label: "Subscription", to: "/dashboard/subscriptions" }],
+      current: "Purchase code",
+      backTo: "/dashboard/subscriptions",
+    };
+  }
+  if (pathname === "/dashboard/subscriptions") {
+    return { title: "Subscription" };
+  }
+  if (pathname === "/dashboard/settings") {
+    return { title: "Settings" };
+  }
+  return { title: "Dashboard" };
+};
+
+const Header = ({ onToggleSidebar }) => {
   const location = useLocation();
-  const [showModal, setShowModal] = useState(false);
-
-  const { user } = useAuth();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
-  const id = user?.organization_profile?.admin_communities[0]?.name;
+  const meta = getPageMeta(location.pathname);
+  const orgName = user?.organization_profile?.organization_name;
+  const initial = (orgName || user?.user?.email || "A").charAt(0).toUpperCase();
 
-  const currentPage = {
-    "/dashboard": "Overview",
-    "/dashboard/students": "Students",
-    "/dashboard/subscriptions": "Subscriptions",
-  };
-
-  const goBack = () => {
-    navigate("/dashboard/students");
-  };
-
-  const toggleSidebar = () => {
-    setSidebar((prev) => !prev);
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+    } finally {
+      setLoggingOut(false);
+      setMenuOpen(false);
+    }
   };
 
   return (
-    <header
-      className="header-bg m-0 p-0 d-flex align-items-center px-lg-5 px-2 py-4"
-      style={{ minHeight: "65px" }}
-    >
-      <div className="position-relative w-100">
-        <div className="d-block d-lg-flex justify-content-between align-items-center">
-          <div>
-            <div className="w-100 d-flex justify-content-between align-items-center">
-              <Link to={"/dashboard"}>
-                <img
-                  src="/assets/logo-white.svg"
-                  alt="Study AI logo"
-                  className="img-fluid"
-                />
-              </Link>
-              <button className="btn d-lg-none" onClick={toggleSidebar}>
-                <img src={MenuLogo} alt="Menu" className="img-fluid" />
-              </button>
-            </div>
-          </div>
-          <div className="d-none d-lg-flex justify-content-between align-items-center">
-            <div className="header-tabs">
-              <Link
-                className={`text-decoration-none ${
-                  location.pathname === "/dashboard"
-                    ? "header-active"
-                    : "header"
-                }`}
-                to={"/dashboard"}
-              >
-                <WorkspacesIcon style={{ marginRight: "10px" }} />
-                Overview
-              </Link>
-
-              <Link
-                className={`text-decoration-none mx-3 ${
-                  location.pathname === "/dashboard/students"
-                    ? "header-active"
-                    : "header"
-                }`}
-                to={"/dashboard/students"}
-              >
-                <GroupIcon style={{ marginRight: "10px" }} />
-                Students
-              </Link>
-
-              <Link
-                className={`text-decoration-none me-3 ${
-                  location.pathname.includes("/dashboard/subscriptions")
-                    ? "header-active"
-                    : "header"
-                }`}
-                to={"/dashboard/subscriptions"}
-              >
-                <SpeakerGroupIcon style={{ marginRight: "10px" }} />
-                Subscriptions
-              </Link>
-
-              <div className="d-flex align-items-center mb-lg-0 border-start">
-                <button className="btn header ms-3" onClick={toggleSidebar}>
-                  <PersonIcon />
-                  <KeyboardArrowDownIcon style={{ marginLeft: "10px" }} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        {location.pathname.includes("/dashboard/discussion-room") ? (
-          <div className="d-flex mt-4 align-items-center justify-content-between">
-            <div className="d-flex align-items-center">
-              <button
-                className="d-flex header-bk-btn align-items-center btn me-2"
-                onClick={goBack}
-              >
-                <ArrowBackIosIcon style={{ fontSize: "14px" }} /> Back
-              </button>
-              <label className="text-white fs-5">Discussion room</label>
-            </div>
-            <button
-              className="d-flex d-lg-none p-0 text-white align-items-center btn me-2"
-              onClick={() => setShowModal(true)}
-            >
-              <AddCircleOutlinedIcon style={{ fontSize: "40px" }} />
-            </button>
-          </div>
+    <header className="app-topbar d-flex align-items-center justify-content-between">
+      <div className="d-flex align-items-center gap-2">
+        <button
+          className="btn d-lg-none p-1 me-1"
+          onClick={onToggleSidebar}
+          aria-label="Open menu"
+        >
+          <MenuIcon />
+        </button>
+        {meta.title ? (
+          <h5 className="m-0 topbar-title">{meta.title}</h5>
         ) : (
-          <div className="text-white mt-4">
-            <label className="header-label">
-              {user?.organization_profile?.organization_name}
-            </label>
-            <label className="ms-3 fw-regular">
-              {currentPage[location.pathname] ?? ""}
-            </label>
+          <div className="d-flex align-items-center topbar-breadcrumb">
+            <button
+              className="btn p-0 me-2 back-chevron"
+              onClick={() => navigate(meta.backTo)}
+              aria-label="Go back"
+            >
+              <ChevronLeftIcon />
+            </button>
+            {meta.crumbs?.map((crumb) => (
+              <span key={crumb.to} className="d-flex align-items-center">
+                <Link to={crumb.to} className="crumb-link text-decoration-none">
+                  {crumb.label}
+                </Link>
+                <ChevronRightIcon className="crumb-sep" fontSize="small" />
+              </span>
+            ))}
+            <span className="crumb-current">{meta.current}</span>
           </div>
         )}
-        <CreatePostModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          communityId={id}
-        />
-        <CSSTransition
-          in={sidebar}
-          timeout={300}
-          classNames="sidebar"
-          nodeRef={sideBarRef}
-          unmountOnExit
-        >
-          <Sidebar
-            ref={sideBarRef}
-            onClose={toggleSidebar}
-            orgName={user?.organization_profile?.organization_name}
-          />
-        </CSSTransition>
+      </div>
+
+      <div className="d-flex align-items-center gap-3">
+        <button className="btn topbar-icon-btn" aria-label="Notifications">
+          <NotificationsOutlinedIcon />
+        </button>
+        <div className="position-relative">
+          <button
+            className="btn p-0 topbar-avatar"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label="Account menu"
+          >
+            {initial}
+          </button>
+          {menuOpen && (
+            <ClickAwayListener onClickAway={() => setMenuOpen(false)}>
+              <div className="topbar-menu">
+                <Link
+                  to="/dashboard/settings"
+                  className="topbar-menu-item text-decoration-none"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Settings
+                </Link>
+                <button
+                  className="topbar-menu-item text-danger"
+                  disabled={loggingOut}
+                  onClick={handleLogout}
+                >
+                  {loggingOut ? "Logging out..." : "Log out"}
+                </button>
+              </div>
+            </ClickAwayListener>
+          )}
+        </div>
       </div>
     </header>
   );
 };
+
 export default Header;

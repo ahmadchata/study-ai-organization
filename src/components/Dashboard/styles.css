@@ -1,10 +1,53 @@
-.summary-bg {
-  background-color: #f9f9f9;
-  border-radius: 36px;
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: #ddf1e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.summary-card {
-  border-radius: 24px;
-  overflow: hidden;
+.chip-select {
   border: 1px solid #eaeaea;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #333;
+}
+
+.rank-badge {
+  min-width: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: #929292;
+}
+
+.pts-tag {
+  font-weight: 500;
+}
+
+.recent-activity-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.recent-activity-table th {
+  text-align: left;
+  color: #929292;
+  font-weight: 400;
+  font-size: 14px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.recent-activity-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f4f4f4;
+  font-size: 14px;
+}
+
+.recent-activity-table tr:last-child td {
+  border-bottom: none;
 }

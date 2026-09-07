@@ -1,0 +1,20 @@
+.top-student-row {
+  padding: 16px 8px;
+  border-bottom: 1px solid #f4f4f4;
+}
+
+.top-student-row:last-child {
+  border-bottom: none;
+}
+
+.rank-marker {
+  min-width: 28px;
+  text-align: center;
+  font-size: 15px;
+  color: #929292;
+}
+
+.page-btn {
+  min-width: 36px;
+  padding: 6px 10px;
+}

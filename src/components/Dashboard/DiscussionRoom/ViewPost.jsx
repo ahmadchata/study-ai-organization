@@ -1,13 +1,12 @@
 import "./styles.css";
 import { useEffect, useRef, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { CommunityAPI } from "../../../api/CommunityAPI";
-import { _formatTimeAgo, _formatTimestamp } from "../../../utils/formatTime";
+import { _formatTimeAgo } from "../../../utils/formatTime";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import Layout from "./Layout";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import PostSkeleton from "../../Common/Skeletons/PostSkeleton";
 import CommentSkeleton from "../../Common/Skeletons/CommentSkeleton";
 import Comment from "../../Common/Comment";
@@ -17,7 +16,6 @@ const ViewPost = () => {
   const [comment, setComment] = useState("");
   const textareaRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const { id } = useParams();
 
   const {
@@ -99,10 +97,6 @@ const ViewPost = () => {
     commentMutation.mutate(commentData);
   };
 
-  const goBack = () => {
-    navigate("/dashboard/discussion-room");
-  };
-
   const autoResize = () => {
     const el = textareaRef.current;
     if (!el) return;
@@ -163,12 +157,6 @@ const ViewPost = () => {
     <Layout>
       <div className="col row m-0 p-0 post-feed">
         <div className="col-12 p-0 text-decoration-none text-dark">
-          <button
-            className="d-flex p-0 pb-3 rounded-0 align-items-center btn mb-4 position-sticky top-0 bg-white w-100"
-            onClick={goBack}
-          >
-            <ArrowBackIosIcon style={{ fontSize: "14px" }} /> Back
-          </button>
           <div className="d-flex">
             <img
               src={user_image || "/assets/cm-placeholder.svg"}

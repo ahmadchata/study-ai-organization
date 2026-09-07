@@ -7,10 +7,17 @@ import NotFound from "../components/404/NotFound";
 const Login = lazy(() => import("../views"));
 const Overview = lazy(() => import("../views/dashboard"));
 const Students = lazy(() => import("../views/dashboard/students"));
+const AddStudent = lazy(() => import("../views/dashboard/students/add"));
+const TopStudents = lazy(() => import("../views/dashboard/top-students"));
+const Exams = lazy(() => import("../views/dashboard/exams"));
+const CreateExam = lazy(() => import("../views/dashboard/exams/create"));
 const Subscriptions = lazy(() => import("../views/dashboard/subscriptions"));
 const PurchaseCode = lazy(() => import("../views/dashboard/purchase-code"));
-const Account = lazy(() => import("../views/dashboard/account"));
+const Settings = lazy(() => import("../views/dashboard/settings"));
 const DiscussionRoom = lazy(() => import("../views/dashboard/discussionRoom"));
+const CreatePost = lazy(
+  () => import("../views/dashboard/discussionRoom/createPost"),
+);
 const ViewPost = lazy(
   () => import("../views/dashboard/discussionRoom/viewPost"),
 );
@@ -33,6 +40,15 @@ const AllRoutes = () => {
         />
 
         <Route
+          path="/dashboard/top-students"
+          element={
+            <ProtectedRoute>
+              <TopStudents />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/dashboard/students"
           element={
             <ProtectedRoute>
@@ -42,10 +58,46 @@ const AllRoutes = () => {
         />
 
         <Route
+          path="/dashboard/students/add"
+          element={
+            <ProtectedRoute>
+              <AddStudent />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/exams"
+          element={
+            <ProtectedRoute>
+              <Exams />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/exams/create"
+          element={
+            <ProtectedRoute>
+              <CreateExam />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/dashboard/discussion-room"
           element={
             <ProtectedRoute>
               <DiscussionRoom />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/discussion-room/create-post"
+          element={
+            <ProtectedRoute>
+              <CreatePost />
             </ProtectedRoute>
           }
         />
@@ -87,10 +139,10 @@ const AllRoutes = () => {
         />
 
         <Route
-          path="/dashboard/account"
+          path="/dashboard/settings"
           element={
             <ProtectedRoute>
-              <Account />
+              <Settings />
             </ProtectedRoute>
           }
         />

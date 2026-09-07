@@ -4,7 +4,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-// import { Link } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
 import "./Login.css";
 import { useSnackbar } from "notistack";
@@ -96,125 +95,99 @@ export default function Login() {
   };
 
   if (authLoading) {
-    return <CircularProgress size={"20px"} style={{ color: "#0c7a50" }} />;
+    return (
+      <div className="d-flex justify-content-center align-items-center min-vh-100">
+        <CircularProgress size={"20px"} style={{ color: "#0c7a50" }} />
+      </div>
+    );
   }
 
   return (
-    <div className="login-container">
-      <div className="login-form px-4">
-        <div className="text-center">
-          <img
-            className="img-fluid logo"
-            src="/assets/logo.svg"
-            alt="logo"
-            loading="lazy"
-          />
-          <p className="m-0 p-0 fs-5">
-            <span className="text-black">Welcome back, enter your details</span>
-          </p>
+    <div className="login-page">
+      <div className="login-visual d-none d-lg-flex">
+        <img
+          className="login-visual-logo"
+          src="/assets/logo-black.png"
+          alt="StudyAI"
+        />
+        <div className="login-visual-illustration">
+          <img src="/assets/analyze-data.png" alt="" className="img-fluid" />
         </div>
+      </div>
 
-        <div className="row mx-0 px-0 mt-4">
-          <div className={`col-6 m-0 p-0 py-2 pe-2`}>
-            <div
-              className={`selection-card py-3 px-2 pointer d-flex align-items-center`}
-              role="button"
-              tabIndex={0}
+      <div className="login-panel d-flex align-items-center justify-content-center">
+        <div className="login-panel-inner">
+          <div className="login-toggle">
+            <button
+              type="button"
+              className="login-toggle-btn"
               onClick={() => {
                 window.location.href = "https://dashboard.study-ai.org";
               }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  window.location.href = "https://dashboard.study-ai.org";
-                }
-              }}
             >
-              <div className="flex-fill text-truncate d-flex align-items-center">
-                <span>Student</span>
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  readOnly
-                  style={{
-                    width: "15px",
-                    height: "15px",
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className={`col-6 m-0 p-0 py-2 ps-2`}>
-            <div
-              className={`selection-card py-3 px-2 pointer d-flex align-items-center selected`}
+              Student
+            </button>
+            <button
+              type="button"
+              className="login-toggle-btn login-toggle-btn-active"
             >
-              <div className="flex-fill text-truncate d-flex align-items-center">
-                <span>Organization</span>
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  checked
-                  readOnly
-                  style={{
-                    width: "15px",
-                    height: "15px",
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="row mx-0 mt-2">
-          <div className="login mt-4 mb-4 col-12 form-control form-field">
-            <input
-              disabled={loading}
-              type="email"
-              className="w-100"
-              placeholder="Enter email address"
-              {...register("usr")}
-            />
-            <div className={`${errors.usr ? "is-invalid" : ""}`}></div>
-
-            {errors?.usr && (
-              <div className="invalid-feedback">{errors.usr.message}</div>
-            )}
+              Organization
+            </button>
           </div>
 
-          <div className={`col-12 px-0`}>
-            <div className="login d-flex justify-content-between form-control form-field">
+          <h2 className="login-title">Welcome back</h2>
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-4">
+              <label className="login-label">Email</label>
               <input
                 disabled={loading}
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter password"
-                className="w-100 me-2"
-                {...register("pwd")}
+                type="email"
+                className="login-input"
+                placeholder="Enter your registered email"
+                {...register("usr")}
               />
-              <div className="pointer" onClick={handleClickShowPassword}>
-                {showPassword ? (
-                  <VisibilityOff sx={{ color: "#929292" }} />
-                ) : (
-                  <Visibility sx={{ color: "#929292" }} />
-                )}
-              </div>
+              {errors?.usr && (
+                <div className="invalid-feedback d-block">
+                  {errors.usr.message}
+                </div>
+              )}
             </div>
-            <div className={`${errors.pwd ? "is-invalid" : ""}`}></div>
-            {errors?.pwd && (
-              <div className="invalid-feedback">{errors.pwd.message}</div>
-            )}
-          </div>
-          {/* <Link to="#" className={`text-dark mt-2`}>
-            <label className="text-end pointer w-100">Forgot password?</label>
-          </Link> */}
-          <button
-            disabled={loading}
-            className="btn default-btn mt-5 mb-4"
-            type="submit"
-          >
-            {loading ? "Logging in..." : "Log in"}
-          </button>
-        </form>
+
+            <div className="mb-5">
+              <label className="login-label">Password</label>
+              <div className="login-input d-flex align-items-center justify-content-between">
+                <input
+                  disabled={loading}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  className="w-100 me-2 login-input-bare"
+                  {...register("pwd")}
+                />
+                <div className="pointer" onClick={handleClickShowPassword}>
+                  {showPassword ? (
+                    <VisibilityOff sx={{ color: "#929292" }} />
+                  ) : (
+                    <Visibility sx={{ color: "#929292" }} />
+                  )}
+                </div>
+              </div>
+              {errors?.pwd && (
+                <div className="invalid-feedback d-block">
+                  {errors.pwd.message}
+                </div>
+              )}
+            </div>
+
+            <button
+              disabled={loading}
+              className="btn login-submit"
+              type="submit"
+            >
+              {loading ? "Logging in..." : "Log in"}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

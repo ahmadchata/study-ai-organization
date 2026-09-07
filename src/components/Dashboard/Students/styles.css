@@ -1,11 +1,12 @@
-.icon-btn {
-  border-radius: 12px;
-  padding: 8px;
-  border: 1px solid #eaeaea;
-}
-
 .green-dot {
   background-color: #0c7a50;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.red-dot {
+  background-color: #ab2c48;
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -23,9 +24,23 @@
   min-width: 196px;
 }
 
-.red-dot {
-  background-color: #ab2c48;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.phone-textarea {
+  width: 100%;
+  background-color: #f9f9f9;
+  border: 1px solid #eaeaea;
+  border-radius: 16px;
+  padding: 16px;
+  resize: vertical;
+  outline: none;
+}
+
+.phone-textarea:focus {
+  border-color: #0c7a50;
+}
+
+.message-preview {
+  background-color: #f9f9f9;
+  border-radius: 16px;
+  padding: 16px;
+  color: #333;
 }

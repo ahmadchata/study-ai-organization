@@ -11,6 +11,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const Profile = () => {
   const [name, setName] = useState("");
@@ -18,6 +23,9 @@ const Profile = () => {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
+  const [pushNotifications, setPushNotifications] = useState(true);
+  const [weeklyDigest, setWeeklyDigest] = useState(true);
+  const [securityAuth, setSecurityAuth] = useState(false);
 
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
@@ -37,19 +45,14 @@ const Profile = () => {
     onSuccess: () => {
       setLoading(false);
       enqueueSnackbar("Success", {
-        autoHideDuration: 10000,
-        style: {
-          backgroundColor: "#fff",
-          color: "#0c7a50",
-        },
+        autoHideDuration: 3000,
+        style: { backgroundColor: "#fff", color: "#0c7a50" },
       });
       queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
     onError: (error) => {
       setLoading(false);
-      enqueueSnackbar(error?.response?.data?.message, {
-        variant: "error",
-      });
+      enqueueSnackbar(error?.response?.data?.message, { variant: "error" });
     },
   });
 
@@ -68,9 +71,7 @@ const Profile = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({
-    resolver: yupResolver(validationSchema),
-  });
+  } = useForm({ resolver: yupResolver(validationSchema) });
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -78,276 +79,310 @@ const Profile = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const changePasswordMutation = useMutation({
-    mutationFn: (details) => {
-      const response = AuthAPI.changePassword(details, true);
-      return response;
-    },
+    mutationFn: (details) => AuthAPI.changePassword(details, true),
     onSuccess: () => {
       setChangingPassword(false);
       enqueueSnackbar("Success", {
-        autoHideDuration: 10000,
-        style: {
-          backgroundColor: "#fff",
-          color: "#0c7a50",
-        },
+        autoHideDuration: 3000,
+        style: { backgroundColor: "#fff", color: "#0c7a50" },
       });
       reset();
       setShowPasswordModal(false);
     },
     onError: () => {
       setChangingPassword(false);
-      enqueueSnackbar("Error", {
-        autoHideDuration: 10000,
-        style: {
-          backgroundColor: "#fff",
-          color: "#0c7a50",
-        },
-      });
+      enqueueSnackbar("Error updating password", { variant: "error" });
     },
   });
 
   const changePassword = (data) => {
-    const payload = {
+    setChangingPassword(true);
+    changePasswordMutation.mutate({
       old_password: data.old_password,
       new_password: data.new_password,
-    };
-    setChangingPassword(true);
-    changePasswordMutation.mutate(payload);
+    });
   };
 
   const updateProfile = () => {
-    mutation.mutate({ name: name, phone: phone, email: email });
+    mutation.mutate({ name, phone, email });
   };
 
   if (isFetching) {
     return <LoadingTracker />;
   }
 
+  const orgName = profile?.message?.organization_name;
+
   return (
     profile && (
-      <div className="py-5">
-        <div className="profile-card p-4">
-          <div className="d-inline-flex flex-column align-items-center w-100">
-            <img
-              src="/assets/profile.svg"
-              alt="Avatar"
-              className="rounded-circle"
-              width={99}
-              height={92}
-            />
-            <button className="mt-4 btn edit-profile">Edit Profile</button>
+      <div>
+        <div className="card-panel p-4 mb-4">
+          <h6 className="mb-1">Organization Profile</h6>
+          <p className="grey-text mb-4">Public information about your school</p>
+
+          <div className="d-flex align-items-center gap-3 mb-4">
+            <span className="settings-avatar">
+              {(orgName || "A").charAt(0).toUpperCase()}
+            </span>
+            <button className="btn dsh-btn px-3">Change logo</button>
+            <button className="btn p-0 text-decoration-none">Remove</button>
           </div>
 
-          <div className="mb-4 mt-5 form-input">
-            <label className="form-label">Organization Name</label>
-            <input
-              type="text"
-              className="pb-2 ps-0 form-control border-0 border-bottom rounded-0 grey-text"
-              placeholder="Enter name"
-              defaultValue={profile?.message?.organization_name}
-              readOnly
-            />
-          </div>
-
-          <div className="mb-4 form-input">
-            <label className="form-label">Email</label>
-            <input
-              type="text"
-              className="pb-2 ps-0 grey-text form-control border-0 border-bottom rounded-0"
-              placeholder="Email"
-              defaultValue={profile?.message?.organization_email}
-              readOnly
-            />
-          </div>
-
-          <div className="mb-4 form-input">
-            <label className="form-label">Address</label>
-            <input
-              type="text"
-              className="pb-2 ps-0 grey-text form-control border-0 border-bottom rounded-0"
-              placeholder="Physcial Address"
-              defaultValue={profile?.message?.physical_address}
-              readOnly
-            />
-          </div>
-
-          <div className="mb-4 form-input">
-            <label className="form-label mb-4">Password</label>
-            <br />
-            <button
-              className="btn secondary-btn py-2"
-              onClick={() => setShowPasswordModal(true)}
-            >
-              Change password
-            </button>
-          </div>
-
-          <h6 className="mt-5 mb-4">Contact person</h6>
-          <div className="profile-field p-4 form-input">
-            <div className="mb-4 mt-3 form-input">
-              <label className="form-label">Name</label>
+          <div className="row mx-0 g-3">
+            <div className="col-12 col-md-6 px-0 pe-md-2">
+              <label className="form-label">Organization name</label>
               <input
                 type="text"
-                className="pb-2 ps-0 form-control border-0 border-bottom rounded-0 grey-text"
+                className="cp-input"
+                defaultValue={orgName}
+                readOnly
+              />
+            </div>
+            <div className="col-12 col-md-6 px-0 ps-md-2">
+              <label className="form-label">Contact email</label>
+              <input
+                type="email"
+                className="cp-input"
+                placeholder="contact@organization.com"
+                defaultValue={profile?.message?.contact_person_email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="col-12 col-md-6 px-0 pe-md-2">
+              <label className="form-label">Contact name</label>
+              <input
+                type="text"
+                className="cp-input"
                 placeholder="Enter name"
                 defaultValue={profile?.message?.contact_person}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-
-            <div className="mb-4 form-input">
-              <label className="form-label">Email</label>
-              <input
-                type="email"
-                className="pb-2 ps-0 grey-text form-control border-0 border-bottom rounded-0"
-                placeholder="Email"
-                defaultValue={profile?.message?.contact_person_email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-
-            <div className="mb-4 form-input">
-              <label className="form-label">Phone</label>
+            <div className="col-12 col-md-6 px-0 ps-md-2">
+              <label className="form-label">Phone number</label>
               <input
                 type="tel"
-                className="pb-2 ps-0 grey-text form-control border-0 border-bottom rounded-0"
+                className="cp-input"
                 placeholder="Phone"
                 defaultValue={profile?.message?.contact_number}
                 onChange={(e) => setPhone(e.target.value)}
               />
             </div>
           </div>
-          <div className="d-flex justify-content-end">
+
+          <div className="d-flex justify-content-between align-items-center mt-4">
             <button
-              disabled={loading || (!name && !phone & !email)}
+              className="btn p-0 green-text"
+              onClick={() => setShowPasswordModal(true)}
+            >
+              Change password
+            </button>
+            <button
+              disabled={loading || (!name && !phone && !email)}
               onClick={updateProfile}
-              className="py-2 btn default-btn my-5"
+              className="btn default-btn py-2 px-4"
             >
               {loading ? "Saving..." : "Save changes"}
             </button>
           </div>
+        </div>
 
-          <Modal
-            open={showPasswordModal}
-            onClose={() => setShowPasswordModal(false)}
-            aria-labelledby="parent-modal-title"
-            aria-describedby="parent-modal-description"
-          >
-            <div
-              className="change-password-bg"
-              onClick={() => {
-                reset();
-                setShowPasswordModal(false);
-              }}
-            >
-              <div
-                className="change-password-modal"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <h5 className="mb-5">Change password</h5>
-                <form onSubmit={handleSubmit(changePassword)}>
-                  <div className="mb-4">
-                    <div className="change-password d-flex justify-content-between form-control form-field">
-                      <input
-                        type={showOldPassword ? "text" : "password"}
-                        placeholder="Old password"
-                        className="w-100 me-2"
-                        {...register("old_password")}
-                      />
-                      <div
-                        className="pointer"
-                        onClick={() => setShowOldPassword((s) => !s)}
-                      >
-                        {showOldPassword ? (
-                          <VisibilityOff sx={{ color: "#929292" }} />
-                        ) : (
-                          <Visibility sx={{ color: "#929292" }} />
-                        )}
-                      </div>
-                    </div>
-                    {errors?.old_password && (
-                      <div className="invalid-feedback d-block">
-                        {errors.old_password.message}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mb-4">
-                    <div className="change-password d-flex justify-content-between form-control form-field">
-                      <input
-                        type={showNewPassword ? "text" : "password"}
-                        placeholder="New password"
-                        className="w-100 me-2"
-                        {...register("new_password")}
-                      />
-                      <div
-                        className="pointer"
-                        onClick={() => setShowNewPassword((s) => !s)}
-                      >
-                        {showNewPassword ? (
-                          <VisibilityOff sx={{ color: "#929292" }} />
-                        ) : (
-                          <Visibility sx={{ color: "#929292" }} />
-                        )}
-                      </div>
-                    </div>
-                    {errors?.new_password && (
-                      <div className="invalid-feedback d-block">
-                        {errors.new_password.message}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mb-4">
-                    <div className="change-password d-flex justify-content-between form-control form-field">
-                      <input
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Confirm new password"
-                        className="w-100 me-2"
-                        {...register("c_pwd")}
-                      />
-                      <div
-                        className="pointer"
-                        onClick={() => setShowConfirmPassword((s) => !s)}
-                      >
-                        {showConfirmPassword ? (
-                          <VisibilityOff sx={{ color: "#929292" }} />
-                        ) : (
-                          <Visibility sx={{ color: "#929292" }} />
-                        )}
-                      </div>
-                    </div>
-                    {errors?.c_pwd && (
-                      <div className="invalid-feedback d-block">
-                        {errors.c_pwd.message}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="d-flex justify-content-end gap-2">
-                    <button
-                      type="button"
-                      className="btn secondary-btn py-2"
-                      onClick={() => {
-                        reset();
-                        setShowPasswordModal(false);
-                      }}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="btn default-btn py-2"
-                      disabled={changingPassword}
-                    >
-                      {changingPassword ? "Updating..." : "Update password"}
-                    </button>
-                  </div>
-                </form>
+        <div className="card-panel">
+          <div className="settings-row d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center gap-3">
+              <span className="settings-icon">
+                <NotificationsOutlinedIcon fontSize="small" />
+              </span>
+              <div>
+                <p className="m-0">Push notifications</p>
+                <p className="grey-text small-text m-0">Streaks, replies &amp; rewards</p>
               </div>
             </div>
-          </Modal>
+            <label className="toggle-switch">
+              <input
+                type="checkbox"
+                checked={pushNotifications}
+                onChange={(e) => setPushNotifications(e.target.checked)}
+              />
+              <span className="toggle-slider" />
+            </label>
+          </div>
+
+          <div className="settings-row d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center gap-3">
+              <span className="settings-icon">
+                <AccessTimeOutlinedIcon fontSize="small" />
+              </span>
+              <div>
+                <p className="m-0">Weekly performance digest</p>
+                <p className="grey-text small-text m-0">Summary every Monday</p>
+              </div>
+            </div>
+            <label className="toggle-switch">
+              <input
+                type="checkbox"
+                checked={weeklyDigest}
+                onChange={(e) => setWeeklyDigest(e.target.checked)}
+              />
+              <span className="toggle-slider" />
+            </label>
+          </div>
+
+          <div className="settings-row d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center gap-3">
+              <span className="settings-icon">
+                <LockOutlinedIcon fontSize="small" />
+              </span>
+              <div>
+                <p className="m-0">Security &amp; Auth</p>
+                <p className="grey-text small-text m-0">Single sign-on, MFA, and access logs</p>
+              </div>
+            </div>
+            <label className="toggle-switch">
+              <input
+                type="checkbox"
+                checked={securityAuth}
+                onChange={(e) => setSecurityAuth(e.target.checked)}
+              />
+              <span className="toggle-slider" />
+            </label>
+          </div>
+
+          <a
+            href="mailto:support@study-ai.org"
+            className="settings-row d-flex align-items-center justify-content-between text-decoration-none text-dark"
+          >
+            <div className="d-flex align-items-center gap-3">
+              <span className="settings-icon">
+                <MailOutlineIcon fontSize="small" />
+              </span>
+              <div>
+                <p className="m-0">Help &amp; Support</p>
+                <p className="grey-text small-text m-0">Contact our team</p>
+              </div>
+            </div>
+            <ChevronRightIcon className="grey-text" />
+          </a>
         </div>
+
+        <Modal
+          open={showPasswordModal}
+          onClose={() => setShowPasswordModal(false)}
+        >
+          <div
+            className="change-password-bg"
+            onClick={() => {
+              reset();
+              setShowPasswordModal(false);
+            }}
+          >
+            <div
+              className="change-password-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h5 className="mb-5">Change password</h5>
+              <form onSubmit={handleSubmit(changePassword)}>
+                <div className="mb-4">
+                  <div className="change-password d-flex justify-content-between form-control form-field">
+                    <input
+                      type={showOldPassword ? "text" : "password"}
+                      placeholder="Old password"
+                      className="w-100 me-2"
+                      {...register("old_password")}
+                    />
+                    <div
+                      className="pointer"
+                      onClick={() => setShowOldPassword((s) => !s)}
+                    >
+                      {showOldPassword ? (
+                        <VisibilityOff sx={{ color: "#929292" }} />
+                      ) : (
+                        <Visibility sx={{ color: "#929292" }} />
+                      )}
+                    </div>
+                  </div>
+                  {errors?.old_password && (
+                    <div className="invalid-feedback d-block">
+                      {errors.old_password.message}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <div className="change-password d-flex justify-content-between form-control form-field">
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      placeholder="New password"
+                      className="w-100 me-2"
+                      {...register("new_password")}
+                    />
+                    <div
+                      className="pointer"
+                      onClick={() => setShowNewPassword((s) => !s)}
+                    >
+                      {showNewPassword ? (
+                        <VisibilityOff sx={{ color: "#929292" }} />
+                      ) : (
+                        <Visibility sx={{ color: "#929292" }} />
+                      )}
+                    </div>
+                  </div>
+                  {errors?.new_password && (
+                    <div className="invalid-feedback d-block">
+                      {errors.new_password.message}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <div className="change-password d-flex justify-content-between form-control form-field">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm new password"
+                      className="w-100 me-2"
+                      {...register("c_pwd")}
+                    />
+                    <div
+                      className="pointer"
+                      onClick={() => setShowConfirmPassword((s) => !s)}
+                    >
+                      {showConfirmPassword ? (
+                        <VisibilityOff sx={{ color: "#929292" }} />
+                      ) : (
+                        <Visibility sx={{ color: "#929292" }} />
+                      )}
+                    </div>
+                  </div>
+                  {errors?.c_pwd && (
+                    <div className="invalid-feedback d-block">
+                      {errors.c_pwd.message}
+                    </div>
+                  )}
+                </div>
+
+                <div className="d-flex justify-content-end gap-2">
+                  <button
+                    type="button"
+                    className="btn secondary-btn py-2"
+                    onClick={() => {
+                      reset();
+                      setShowPasswordModal(false);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn default-btn py-2"
+                    disabled={changingPassword}
+                  >
+                    {changingPassword ? "Updating..." : "Update password"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </Modal>
       </div>
     )
   );

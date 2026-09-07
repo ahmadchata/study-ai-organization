@@ -1,22 +1,30 @@
 import { useState, useEffect } from "react";
 import Table from "../../Layout/Table";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
+import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
+import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { DashboardAPI } from "../../../api/DashboardAPI";
 import { SubscriptionAPI } from "../../../api/SubscriptionAPI";
-import ForumIcon from "@mui/icons-material/ForumOutlined";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
 import { useSnackbar } from "notistack";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import "./styles.css";
 
+const initialsOf = (name = "") =>
+  name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+
 const Students = () => {
-  const [selected, setSelected] = useState([]);
-  const [hoveredRow, setHoveredRow] = useState(null);
   const [actionMenuRow, setActionMenuRow] = useState(null);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,7 +34,6 @@ const Students = () => {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
 
-  // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -34,6 +41,12 @@ const Students = () => {
 
     return () => clearTimeout(timer);
   }, [searchTerm]);
+
+  const { data: overview } = useQuery({
+    queryKey: ["overview"],
+    refetchOnMount: false,
+    queryFn: () => DashboardAPI.overview(true),
+  });
 
   const { data: students, isFetching } = useQuery({
     queryKey: ["students", currentPage, debouncedSearchTerm],
@@ -51,145 +64,69 @@ const Students = () => {
       setLoading(false);
       enqueueSnackbar("Success", {
         autoHideDuration: 1000,
-        style: {
-          backgroundColor: "#fff",
-          color: "#0c7a50",
-        },
+        style: { backgroundColor: "#fff", color: "#0c7a50" },
       });
       queryClient.invalidateQueries({ queryKey: ["students"] });
       queryClient.invalidateQueries({ queryKey: ["overview"] });
     },
     onError: (error) => {
       setLoading(false);
-      enqueueSnackbar(error?.response?.data?.message, {
-        variant: "error",
-      });
+      enqueueSnackbar(error?.response?.data?.message, { variant: "error" });
     },
   });
 
   const revokeAccess = (subCode) => {
-    mutation.mutate({
-      subscription_code: subCode,
-    });
+    mutation.mutate({ subscription_code: subCode });
   };
 
   const data = students?.students;
 
-  const copyToClipboard = (text) => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text);
-    } else {
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-    }
-    enqueueSnackbar("Access code copied", {
-      autoHideDuration: 1000,
-      style: {
-        backgroundColor: "#fff",
-        color: "#0c7a50",
-      },
-    });
-  };
-
-  const getColumns = (selected, onSelectAll, onSelectRow, hoveredRow) => [
-    {
-      id: "select",
-      header: () => (
-        <input
-          type="checkbox"
-          checked={
-            selected?.length === (data?.length || 0) && (data?.length || 0) > 0
-          }
-          indeterminate={
-            selected?.length > 0 && selected?.length < (data?.length || 0)
-              ? "indeterminate"
-              : undefined
-          }
-          onChange={onSelectAll}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <input
-          type="checkbox"
-          checked={selected.includes(row.original.name)}
-          onChange={() => onSelectRow(row.original.name)}
-          aria-label={`Select ${row.original.name}`}
-        />
-      ),
-      size: 32,
-    },
+  const columns = [
     {
       header: "Name",
       accessorKey: "student_name",
-    },
-    {
-      header: "Access codes",
-      accessorKey: "active_subscription?.subscription_code",
       cell: ({ row }) => (
-        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {row.original.active_subscription?.subscription_code}
-          {hoveredRow === row.id &&
-            row.original.active_subscription?.subscription_code && (
-              <ContentCopyIcon
-                style={{ color: "#000", fontSize: "16px", cursor: "pointer" }}
-                onClick={() => copyToClipboard(row.original.subscription_code)}
-              />
-            )}
-        </span>
+        <div className="d-flex align-items-center gap-2">
+          <span className="avatar-circle">
+            {initialsOf(row.original.student_name)}
+          </span>
+          <span className="text-capitalize">{row.original.student_name}</span>
+        </div>
       ),
     },
     {
-      header: "Study points",
-      accessorKey: "studyPoints",
-      cell: ({ row }) => (
-        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {row.original.studyPoints}
-        </span>
-      ),
+      header: "Phone number",
+      accessorKey: "phone_number",
+      cell: ({ row }) => row.original.phone_number || "—",
     },
     {
-      header: "Last login",
+      header: "Performance",
+      accessorKey: "performance",
+      cell: ({ row }) =>
+        row.original.performance !== undefined &&
+        row.original.performance !== null
+          ? `${row.original.performance}%`
+          : "—",
+    },
+    {
+      header: "Exams",
+      accessorKey: "exams_completed",
+      cell: ({ row }) =>
+        row.original.exams_completed !== undefined
+          ? `${row.original.exams_completed} completed`
+          : "—",
+    },
+    {
+      header: "Last active",
       accessorKey: "last_login",
-      cell: ({ row }) => (
-        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {row.original.last_login
-            ? dayjs(row.original.last_login).format("DD-MMM")
-            : "No login"}
-        </span>
-      ),
+      cell: ({ row }) =>
+        row.original.last_login
+          ? dayjs(row.original.last_login).fromNow?.() ??
+            dayjs(row.original.last_login).format("DD-MMM")
+          : "—",
     },
     {
-      header: "Days remaining",
-      accessorKey: "days_remaining",
-      cell: ({ row }) => (
-        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {row.original.days_remaining}
-        </span>
-      ),
-    },
-    {
-      header: "Subscription status",
-      accessorKey: "subscription_status",
-      cell: ({ row }) => (
-        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <span
-            className={
-              row.original.subscription_status === "Active"
-                ? "green-dot"
-                : "red-dot"
-            }
-          ></span>
-          {row.original.subscription_status}
-        </span>
-      ),
-    },
-    {
-      header: "Action",
+      header: "",
       accessorKey: "action",
       cell: ({ row }) => (
         <div style={{ position: "relative" }}>
@@ -225,66 +162,65 @@ const Students = () => {
     },
   ];
 
-  const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelected((data || []).map((row) => row.name));
-    } else {
-      setSelected([]);
-    }
-  };
-
-  const handleSelectRow = (name) => {
-    setSelected((prev) =>
-      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name],
-    );
-  };
-
-  const columns = getColumns(
-    selected,
-    handleSelectAll,
-    handleSelectRow,
-    hoveredRow,
-    setHoveredRow,
-  );
-
-  // Custom rowProps to handle hover
-  const rowProps = (row) => ({
-    onMouseEnter: () => setHoveredRow(row.id),
-    onMouseLeave: () => setHoveredRow(null),
-  });
-
-  // if (isFetching) {
-  //   return <LoadingTracker />;
-  // }
+  const rowProps = () => ({});
 
   return (
-    <div className="px-lg-5 px-2">
-      <div className="my-5 d-block d-lg-flex justify-content-between align-items-center">
-        <button className="btn dsh-btn d-inline-flex align-items-center me-4">
-          <span className="icon-btn d-inline-flex align-items-center me-2">
-            <PeopleOutlineIcon style={{ fontSize: "18px" }} />
-          </span>
-          Total Students:{" "}
-          <span className="ms-2 green-text">{data?.length}</span>
-        </button>
-        <Link
-          to="/dashboard/discussion-room"
-          className="text-decoration-none text-dark"
-        >
-          <button className="ms-0 ms-lg-4 mt-4 mt-lg-0 btn dsh-btn green-text d-inline-flex align-items-center py-3 px-3">
-            <ForumIcon style={{ marginRight: "5px" }} />
-            Discussion room
-          </button>
-        </Link>
+    <div>
+      <div className="row mx-0 g-3 mb-4">
+        <div className="col-12 col-lg-4 px-0 pe-lg-2">
+          <div className="stat-card d-flex align-items-start justify-content-between">
+            <div>
+              <label>Total Students</label>
+              <h3>{overview?.statistics?.total_students ?? data?.length ?? 0}</h3>
+            </div>
+            <span className="stat-icon">
+              <GroupOutlinedIcon style={{ color: "#0c7a50" }} />
+            </span>
+          </div>
+        </div>
+
+        <div className="col-12 col-lg-4 px-0 px-lg-2">
+          <div className="stat-card d-flex align-items-start justify-content-between">
+            <div>
+              <label>Active This Week</label>
+              <h3>{overview?.statistics?.students_with_subscriptions ?? 0}</h3>
+            </div>
+            <span className="stat-icon">
+              <TrendingUpOutlinedIcon style={{ color: "#0c7a50" }} />
+            </span>
+          </div>
+        </div>
+
+        <div className="col-12 col-lg-4 px-0 ps-lg-2">
+          <div className="stat-card d-flex align-items-start justify-content-between">
+            <div>
+              <label>Avg. Performance</label>
+              <h3>{overview?.statistics?.avg_performance ?? "—"}</h3>
+            </div>
+            <span className="stat-icon">
+              <BarChartOutlinedIcon style={{ color: "#0c7a50" }} />
+            </span>
+          </div>
+        </div>
       </div>
+
       <Table
         columns={columns}
         isFetching={isFetching}
         data={data || []}
         rowProps={rowProps}
-        statusAccessor="subscription_status"
         onSearch={setSearchTerm}
         searchValue={searchTerm}
+        actions={
+          <>
+            <button className="btn dsh-btn px-3">Filter by</button>
+            <Link to="/dashboard/students/add" className="text-decoration-none">
+              <button className="btn default-btn d-inline-flex align-items-center gap-1 px-3">
+                <AddIcon fontSize="small" /> Add student
+              </button>
+            </Link>
+          </>
+        }
       />
       <div className="d-flex justify-content-end align-items-center gap-2 mt-4">
         <button
@@ -300,9 +236,7 @@ const Students = () => {
         ).map((page) => (
           <button
             key={page}
-            className={`btn ${
-              currentPage === page ? "dsh-btn" : "btn-outline-secondary"
-            }`}
+            className="btn"
             onClick={() => setCurrentPage(page)}
             style={{
               minWidth: "32px",

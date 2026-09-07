@@ -1,0 +1,102 @@
+.exam-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ddf1e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.context-menu {
+  position: absolute;
+  right: 0;
+  top: -10px;
+  z-index: 100;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  min-width: 160px;
+}
+
+.cp-input {
+  width: 100%;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 14px 16px;
+  outline: none;
+  background-color: #fff;
+}
+
+.cp-input:focus {
+  border-color: #0c7a50;
+}
+
+.subject-chip {
+  display: inline-flex;
+  align-items: center;
+  background-color: #ddf1e9;
+  color: #0c7a50;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.upload-info-banner {
+  background-color: #eaf4ff;
+  color: #1c5a99;
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.upload-dropzone {
+  border: 1.5px dashed #d6d6d6;
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #fafafa;
+}
+
+.upload-dropzone:hover {
+  border-color: #0c7a50;
+}
+
+.upload-dropzone-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #eaeaea;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.setting-row {
+  padding: 16px 0;
+  border-top: 1px solid #f4f4f4;
+}
+
+.assign-students-list {
+  border: 1px solid #eaeaea;
+  border-radius: 16px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.assign-student-row {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f4f4f4;
+  margin: 0;
+}
+
+.assign-student-row:last-child {
+  border-bottom: none;
+}
