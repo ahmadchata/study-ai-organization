@@ -33,6 +33,13 @@ const getPageMeta = (pathname) => {
       backTo: "/dashboard/exams",
     };
   }
+  if (pathname.startsWith("/dashboard/exams/")) {
+    return {
+      crumbs: [{ label: "Exams", to: "/dashboard/exams" }],
+      current: "View exam",
+      backTo: "/dashboard/exams",
+    };
+  }
   if (pathname === "/dashboard/exams") {
     return { title: "Exams" };
   }

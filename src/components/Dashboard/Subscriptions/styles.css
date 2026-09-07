@@ -20,19 +20,3 @@
   border-radius: 8px;
 }
 
-.billing-row {
-  padding: 16px 0;
-  border-bottom: 1px solid #f4f4f4;
-}
-
-.billing-row:last-child {
-  border-bottom: none;
-}
-
-.paid-badge {
-  background-color: #ddf1e9;
-  color: #0c7a50;
-  font-size: 12px;
-  padding: 4px 12px;
-  border-radius: 20px;
-}

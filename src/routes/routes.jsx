@@ -11,6 +11,7 @@ const AddStudent = lazy(() => import("../views/dashboard/students/add"));
 const TopStudents = lazy(() => import("../views/dashboard/top-students"));
 const Exams = lazy(() => import("../views/dashboard/exams"));
 const CreateExam = lazy(() => import("../views/dashboard/exams/create"));
+const ViewExam = lazy(() => import("../views/dashboard/exams/view"));
 const Subscriptions = lazy(() => import("../views/dashboard/subscriptions"));
 const PurchaseCode = lazy(() => import("../views/dashboard/purchase-code"));
 const Settings = lazy(() => import("../views/dashboard/settings"));
@@ -80,6 +81,15 @@ const AllRoutes = () => {
           element={
             <ProtectedRoute>
               <CreateExam />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/exams/:examId"
+          element={
+            <ProtectedRoute>
+              <ViewExam />
             </ProtectedRoute>
           }
         />

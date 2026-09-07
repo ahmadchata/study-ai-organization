@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import AddIcon from "@mui/icons-material/Add";
@@ -35,6 +35,7 @@ const Exams = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const { data, isFetching } = useQuery({
     queryKey: ["organizationExams"],
@@ -62,11 +63,7 @@ const Exams = () => {
     setActionMenuRow(null);
     const id = exam.organization_exam_id;
     if (!id) return;
-    if (
-      window.confirm(
-        `Delete "${exam.exam_title}"? This cannot be undone.`,
-      )
-    ) {
+    if (window.confirm(`Delete "${exam.exam_title}"? This cannot be undone.`)) {
       deleteMutation.mutate(id);
     }
   };
@@ -85,7 +82,10 @@ const Exams = () => {
       cell: ({ row }) => (
         <div className="d-flex align-items-center gap-2">
           <span className="exam-icon">
-            <MenuBookOutlinedIcon fontSize="small" style={{ color: "#0c7a50" }} />
+            <MenuBookOutlinedIcon
+              fontSize="small"
+              style={{ color: "#0c7a50" }}
+            />
           </span>
           {row.original.exam_title || row.original.title}
         </div>
@@ -125,7 +125,10 @@ const Exams = () => {
                 <button
                   className="dropdown-item w-100 text-start px-3 py-2"
                   style={{ border: "none", background: "none" }}
-                  onClick={() => setActionMenuRow(null)}
+                  onClick={() => {
+                    setActionMenuRow(null);
+                    navigate(`/dashboard/exams/${row.original.organization_exam_id}`);
+                  }}
                 >
                   View exam
                 </button>
@@ -157,7 +160,7 @@ const Exams = () => {
         hideExport
         actions={
           <>
-            <button className="btn dsh-btn px-3">Filter by</button>
+            {/* <button className="btn dsh-btn px-3">Filter by</button> */}
             <Link to="/dashboard/exams/create" className="text-decoration-none">
               <button className="btn default-btn d-inline-flex align-items-center gap-1 px-3">
                 <AddIcon fontSize="small" /> New Exam

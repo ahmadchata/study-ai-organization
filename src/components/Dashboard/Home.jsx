@@ -17,11 +17,31 @@ import {
 } from "recharts";
 
 const RECENT_ACTIVITY = [
-  { name: "Chinedu Okafor", description: "Completed Algebra Mock #4 · Grade 11", date: "2m ago" },
-  { name: "Liam O'Connor", description: "Started Biology session · Grade 10", date: "8m ago" },
-  { name: "Priya Shah", description: "Submitted Physics quiz · Grade 12", date: "14m ago" },
-  { name: "Noah Becker", description: "Reviewed History flashcards · Grade 9", date: "23m ago" },
-  { name: "Sofia Russo", description: "Completed English Mock #2 · Grade 11", date: "41m ago" },
+  {
+    name: "Chinedu Okafor",
+    description: "Completed Algebra Mock #4 · Grade 11",
+    date: "2m ago",
+  },
+  {
+    name: "Liam O'Connor",
+    description: "Started Biology session · Grade 10",
+    date: "8m ago",
+  },
+  {
+    name: "Priya Shah",
+    description: "Submitted Physics quiz · Grade 12",
+    date: "14m ago",
+  },
+  {
+    name: "Noah Becker",
+    description: "Reviewed History flashcards · Grade 9",
+    date: "23m ago",
+  },
+  {
+    name: "Sofia Russo",
+    description: "Completed English Mock #2 · Grade 11",
+    date: "41m ago",
+  },
 ];
 
 const initialsOf = (name = "") =>
@@ -174,7 +194,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="card-panel p-3 p-lg-4 mt-4">
+      {/* <div className="card-panel p-3 p-lg-4 mt-4">
         <div className="d-flex align-items-center justify-content-between mb-3">
           <h6 className="m-0">Recent Activity</h6>
           <Link to="/dashboard/students" className="text-decoration-none green-text">
@@ -208,7 +228,7 @@ const Home = () => {
             </tbody>
           </table>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

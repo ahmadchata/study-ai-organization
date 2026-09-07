@@ -121,8 +121,8 @@ const Students = () => {
       accessorKey: "last_login",
       cell: ({ row }) =>
         row.original.last_login
-          ? dayjs(row.original.last_login).fromNow?.() ??
-            dayjs(row.original.last_login).format("DD-MMM")
+          ? (dayjs(row.original.last_login).fromNow?.() ??
+            dayjs(row.original.last_login).format("DD-MMM"))
           : "—",
     },
     {
@@ -171,7 +171,9 @@ const Students = () => {
           <div className="stat-card d-flex align-items-start justify-content-between">
             <div>
               <label>Total Students</label>
-              <h3>{overview?.statistics?.total_students ?? data?.length ?? 0}</h3>
+              <h3>
+                {overview?.statistics?.total_students ?? data?.length ?? 0}
+              </h3>
             </div>
             <span className="stat-icon">
               <GroupOutlinedIcon style={{ color: "#0c7a50" }} />
@@ -213,7 +215,7 @@ const Students = () => {
         searchValue={searchTerm}
         actions={
           <>
-            <button className="btn dsh-btn px-3">Filter by</button>
+            {/* <button className="btn dsh-btn px-3">Filter by</button> */}
             <Link to="/dashboard/students/add" className="text-decoration-none">
               <button className="btn default-btn d-inline-flex align-items-center gap-1 px-3">
                 <AddIcon fontSize="small" /> Add student

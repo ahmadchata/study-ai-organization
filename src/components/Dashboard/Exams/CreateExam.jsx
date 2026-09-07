@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import CheckIcon from "@mui/icons-material/Check";
@@ -73,6 +73,8 @@ const CreateExam = () => {
   const [subjects, setSubjects] = useState([]);
   const [questionsFile, setQuestionsFile] = useState(null);
   const [contentFile, setContentFile] = useState(null);
+  const [questionsDragActive, setQuestionsDragActive] = useState(false);
+  const [contentDragActive, setContentDragActive] = useState(false);
 
   const [questionsPerAttempt, setQuestionsPerAttempt] = useState(40);
   const [examDuration, setExamDuration] = useState(60);
@@ -84,24 +86,36 @@ const CreateExam = () => {
   const [closingDate, setClosingDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [studentSearch, setStudentSearch] = useState("");
+  const [debouncedStudentSearch, setDebouncedStudentSearch] = useState("");
   const [selectedStudents, setSelectedStudents] = useState([]);
 
-  const { data: studentsData } = useQuery({
-    queryKey: ["students", "create-exam"],
-    queryFn: () => DashboardAPI.getStudents(1, "", true),
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedStudentSearch(studentSearch);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [studentSearch]);
+
+  const { data: studentsData, isFetching: isFetchingStudents } = useQuery({
+    queryKey: ["students", "create-exam", debouncedStudentSearch],
+    queryFn: () =>
+      DashboardAPI.getStudents(1, debouncedStudentSearch, true, 100),
     enabled: step === 4,
   });
 
-  const students = studentsData?.students || [];
-  const filteredStudents = students.filter((s) =>
-    (s.student_name || "").toLowerCase().includes(studentSearch.toLowerCase()),
-  );
+  const filteredStudents = studentsData?.students || [];
+
+  const commitPendingSubject = () => {
+    const value = subjectInput.trim();
+    if (!value) return;
+    setSubjects((prev) => (prev.includes(value) ? prev : [...prev, value]));
+    setSubjectInput("");
+  };
 
   const addSubject = (e) => {
-    if (e.key === "Enter" && subjectInput.trim()) {
+    if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
-      setSubjects((prev) => [...prev, subjectInput.trim()]);
-      setSubjectInput("");
+      commitPendingSubject();
     }
   };
 
@@ -113,6 +127,31 @@ const CreateExam = () => {
     setSelectedStudents((prev) =>
       prev.includes(id) ? prev.filter((n) => n !== id) : [...prev, id],
     );
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnter = (e, setDragActive) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  };
+
+  const handleDragLeave = (e, setDragActive) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  };
+
+  const handleDrop = (e, setFile, setDragActive) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) setFile(file);
   };
 
   const downloadTemplate = (templateType) => {
@@ -237,6 +276,7 @@ const CreateExam = () => {
               value={subjectInput}
               onChange={(e) => setSubjectInput(e.target.value)}
               onKeyDown={addSubject}
+              onBlur={commitPendingSubject}
             />
             {subjects.length > 0 && (
               <div className="d-flex flex-wrap gap-2 mt-3">
@@ -280,8 +320,14 @@ const CreateExam = () => {
               {subjects.join(", ") || "your subjects"}
             </p>
             <div
-              className="upload-dropzone"
+              className={`upload-dropzone ${questionsDragActive ? "upload-dropzone-active" : ""}`}
               onClick={() => questionsFileRef.current?.click()}
+              onDragOver={handleDragOver}
+              onDragEnter={(e) => handleDragEnter(e, setQuestionsDragActive)}
+              onDragLeave={(e) => handleDragLeave(e, setQuestionsDragActive)}
+              onDrop={(e) =>
+                handleDrop(e, setQuestionsFile, setQuestionsDragActive)
+              }
             >
               <span className="upload-dropzone-icon">
                 <UploadIcon />
@@ -321,8 +367,14 @@ const CreateExam = () => {
               Upload supporting study content or passages for this exam
             </p>
             <div
-              className="upload-dropzone"
+              className={`upload-dropzone ${contentDragActive ? "upload-dropzone-active" : ""}`}
               onClick={() => contentFileRef.current?.click()}
+              onDragOver={handleDragOver}
+              onDragEnter={(e) => handleDragEnter(e, setContentDragActive)}
+              onDragLeave={(e) => handleDragLeave(e, setContentDragActive)}
+              onDrop={(e) =>
+                handleDrop(e, setContentFile, setContentDragActive)
+              }
             >
               <span className="upload-dropzone-icon">
                 <UploadIcon />
@@ -485,29 +537,39 @@ const CreateExam = () => {
             </div>
 
             <div className="assign-students-list">
-              {filteredStudents.map((s) => {
-                const id = studentIdOf(s);
-                return (
-                  <label
-                    key={id}
-                    className="d-flex align-items-center gap-2 assign-student-row"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedStudents.includes(id)}
-                      onChange={() => toggleStudent(id)}
-                    />
-                    <span className="avatar-circle">
-                      {initialsOf(s.student_name)}
-                    </span>
-                    <span className="text-capitalize">{s.student_name}</span>
-                  </label>
-                );
-              })}
-              {filteredStudents.length === 0 && (
+              {isFetchingStudents ? (
                 <p className="grey-text py-3 text-center m-0">
-                  No students found
+                  Searching students...
                 </p>
+              ) : (
+                <>
+                  {filteredStudents.map((s) => {
+                    const id = studentIdOf(s);
+                    return (
+                      <label
+                        key={id}
+                        className="d-flex align-items-center gap-2 assign-student-row"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedStudents.includes(id)}
+                          onChange={() => toggleStudent(id)}
+                        />
+                        <span className="avatar-circle">
+                          {initialsOf(s.student_name)}
+                        </span>
+                        <span className="text-capitalize">
+                          {s.student_name}
+                        </span>
+                      </label>
+                    );
+                  })}
+                  {filteredStudents.length === 0 && (
+                    <p className="grey-text py-3 text-center m-0">
+                      No students found
+                    </p>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -526,7 +588,10 @@ const CreateExam = () => {
         {step < 4 ? (
           <button
             className="btn default-btn py-2 px-4"
-            onClick={() => setStep((s) => s + 1)}
+            onClick={() => {
+              if (step === 1) commitPendingSubject();
+              setStep((s) => s + 1);
+            }}
           >
             Continue
           </button>

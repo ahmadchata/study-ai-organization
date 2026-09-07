@@ -68,6 +68,11 @@
   border-color: #0c7a50;
 }
 
+.upload-dropzone-active {
+  border-color: #0c7a50;
+  background-color: #eefaf3;
+}
+
 .upload-dropzone-icon {
   width: 44px;
   height: 44px;
@@ -98,5 +103,57 @@
 }
 
 .assign-student-row:last-child {
+  border-bottom: none;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.status-badge-green {
+  background-color: #ddf1e9;
+  color: #0c7a50;
+}
+
+.status-badge-amber {
+  background-color: #fdf1da;
+  color: #b8790a;
+}
+
+.status-badge-grey {
+  background-color: #f1f1f1;
+  color: #666;
+}
+
+.results-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+.results-table th {
+  text-align: left;
+  color: #929292;
+  font-weight: 400;
+  font-size: 13px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #eaeaea;
+  white-space: nowrap;
+}
+
+.results-table td {
+  padding: 18px 20px;
+  border-bottom: 1px solid #f4f4f4;
+  font-size: 14px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.results-table tr:last-child td {
   border-bottom: none;
 }

@@ -66,6 +66,19 @@ export const ExamAPI = {
     return response.data;
   },
 
+  getExamResults: async function (organizationExamId, cancel = false) {
+    const response = await api.request({
+      url: `/method/studyai.apis.organization_exam.get_organization_exam_results?organization_exam_id=${encodeURIComponent(organizationExamId)}`,
+      method: "GET",
+      signal: cancel
+        ? cancelApiObject[
+            this.getExamResults.name
+          ].handleRequestCancellation().signal
+        : undefined,
+    });
+    return response.data;
+  },
+
   deleteExam: async function (organizationExamId, cancel = false) {
     const response = await api.request({
       url: `/method/studyai.apis.organization_exam.delete_organization_exam?organization_exam_id=${encodeURIComponent(organizationExamId)}`,

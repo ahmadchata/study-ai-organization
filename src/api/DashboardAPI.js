@@ -38,9 +38,9 @@ export const DashboardAPI = {
     return response.data.data;
   },
 
-  getStudents: async function (page = 1, search, cancel = false) {
+  getStudents: async function (page = 1, search, cancel = false, pageSize = 20) {
     const response = await api.request({
-      url: `/method/studyai.apis.organization.get_organization_students?page=${page}&page_size=${20}&search=${search}`,
+      url: `/method/studyai.apis.organization.get_organization_students?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search || "")}`,
       method: "GET",
       signal: cancel
         ? cancelApiObject[this.getStudents.name].handleRequestCancellation()
